@@ -70,13 +70,13 @@ public class Node {
 	 */
 	private int groupState;
 	/**
-	 * 记录上一次用户操作节点的指令类型;用于前端页面指令按钮的颜色转换，提示用户上一次操作类型是什么
+	 * 记录上一次用户操作节点的指令类型;用于前端页面开关按钮的颜色转换，提示用户上一次操作类型是什么
 	 * lastOperateType：open;表示最近一次的操作为开灯
 	 * lastOperateType：close;表示最近一次的操作为关灯
-	 * lastOperateType：dim;表示最近一次的操作为pwm调光
-	 * lastOperateType：luxdim;表示最近一次的操作为lux调光
-	 * lastOperateType：toning;表示最近一次的操作为调色
 	 */
+	// * lastOperateType：dim;表示最近一次的操作为pwm调光
+	//* lastOperateType：luxdim;表示最近一次的操作为lux调光
+    //* lastOperateType：toning;表示最近一次的操作为调色
 	private String lastOperateType;
 	/**
 	 * param2-4为预留参数

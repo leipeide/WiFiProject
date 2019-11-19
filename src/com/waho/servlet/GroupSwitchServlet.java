@@ -49,16 +49,20 @@ public class GroupSwitchServlet extends HttpServlet {
 			}
 			UserService us = new UserServiceImpl();
 			int result = us.groupBroadcastSwitchNode(userid,groupid,switchState,percentage);
+		    /**
+			 * 注意：此处的中文不要轻易的去改，涉及到前端判断字符串去查询相应的语言库;
+			 * 若修改，需要前后端统一
+			 */
 			if(result > 0) {
-				String res = "指令发送成功!";
+				String res = "指令发送成功";
 				response.getWriter().write(res);
 			}else {
-				String res = "指令发送失败,请检查设备是否离线或分组内无节点!";
+				String res = "指令发送失败请检查设备是否离线或分组内是否存在节点";
 				response.getWriter().write(res);
 			}
 			//3.分发转向
 		}else {
-			String res = "提交失败!";
+			String res = "提交失败";
 			response.getWriter().write(res);
 		}
 	}

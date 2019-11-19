@@ -37,6 +37,7 @@ public class AddWifiToWifiGroupFromServlet extends HttpServlet {
 		//1.获取表单数据
 		String groupid = request.getParameter("groupid");
 		String userid = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		//2.处理业务逻辑
 		UserService us = new UserServiceImpl();
 		List<Node> wifis = us.getWifiNodes(Integer.parseInt(userid));
@@ -45,6 +46,8 @@ public class AddWifiToWifiGroupFromServlet extends HttpServlet {
 			request.setAttribute("wifis", wifis);
 		}
 		request.setAttribute("groupid", groupid);
+		request.setAttribute("wifiListSize", wifis.size());
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/addWfiToWifiGroupFrom.jsp").forward(request, response);
 		
 	}

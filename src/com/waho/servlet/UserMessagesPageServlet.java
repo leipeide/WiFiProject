@@ -31,8 +31,10 @@ public class UserMessagesPageServlet extends HttpServlet {
 		
 		// 获取表单数据
 		String useridStr = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		
 		request.setAttribute("userid",useridStr);
+		request.setAttribute("i18nLanguage",i18nLanguageStr );
 		request.getRequestDispatcher("/admin/userMessageForm.jsp").forward(request, response);
 	}
 

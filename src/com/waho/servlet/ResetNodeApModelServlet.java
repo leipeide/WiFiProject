@@ -63,12 +63,12 @@ public class ResetNodeApModelServlet extends HttpServlet {
 			Boolean result = us.resetNodeApModel(nodeIdArr);
 			//3.分发转向
 			if(result) {
-				response.getWriter().write(JSON.toJSONString("指令发送成功!"));
+				response.getWriter().write(JSON.toJSONString("指令发送成功"));
 			}else {
-				response.getWriter().write(JSON.toJSONString("指令发送失败!"));
+				response.getWriter().write(JSON.toJSONString("指令发送失败请检查设备是否已离线"));
 			}
 		}else {
-			response.getWriter().write(JSON.toJSONString("未选择对象!"));
+			response.getWriter().write(JSON.toJSONString("未选择对象"));
 		}
 		
 	}

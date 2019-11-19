@@ -32,29 +32,33 @@ public class BroadcastControlFormServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
 		//1. 获取表单参数
 		String userid = request.getParameter("userid");
 		String typeParam = request.getParameter("typeParam");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
+		
 		//2.调用业务逻辑
 		if(userid != null && userid != "" && typeParam != null && typeParam != "") {
 			
 			if(typeParam.equals("ballastBC")) { //由镇流器页面点击的广播控制；跳转到镇流器广播控制页面
 				//3.分发转向
 				request.setAttribute("userid", userid);
+				request.setAttribute("i18nLanguage", i18nLanguageStr);
 				request.getRequestDispatcher("/admin/ballastBroadcastControlForm.jsp").forward(request, response);
 			
 			}else if(typeParam.equals("ledBC")) {//由led驱动器页面点击的广播控制；跳转到led驱动器广播控制页面
 				//3.分发转向
 				request.setAttribute("userid", userid);
+				request.setAttribute("i18nLanguage", i18nLanguageStr);
 				request.getRequestDispatcher("/admin/ledBroadcastControlForm.jsp").forward(request, response);
 				
 			}else if(typeParam.equals("wifiBC")){//由wifi无线调光器页面点击的广播控制；跳转到wifi无线调光器广播控制页面
 				//3.分发转向
 				request.setAttribute("userid", userid);
+				request.setAttribute("i18nLanguage", i18nLanguageStr);
 				request.getRequestDispatcher("/admin/wifiBroadcastControlForm.jsp").forward(request, response);
 			}
 			

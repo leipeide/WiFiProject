@@ -43,7 +43,6 @@ public class PloyBroadcastCmdHandler {
 			
 			try {
 				Node node = new Node();
-				//Ploy ploy = new Ploy();
 				NodeDao nodeDao = new NodeDaoImpl();
 				PloyDao ployDao = new PloyDaoImpl();
 				GroupNodeDao gnDao = new GroupNodeDaoImpl();

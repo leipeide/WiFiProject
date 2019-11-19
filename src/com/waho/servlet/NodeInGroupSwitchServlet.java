@@ -38,13 +38,18 @@ public class NodeInGroupSwitchServlet extends HttpServlet {
 		// 2.处理业务逻辑
 		if(null != nodeidStr && "" != nodeidStr && null != switchStateStr && "" != switchStateStr) {
 			NodeService nodeService = new NodeServiceImpl();
-			Boolean result = nodeService.nodeInGroupWriteCmd(Integer.parseInt(nodeidStr),Integer.parseInt(switchStateStr));
-			// 3.分发转向
+			Boolean result = nodeService.nodeInGroupWriteCmd(Integer.parseInt(nodeidStr),Integer.parseInt(switchStateStr)); 
+            /**
+             * 3.分发转向
+             * 注意：此处的中文不要轻易的去改，涉及到前端判断字符串去查询相应的语言库，若修改，需要前后端统一
+             */
 			if(result) {
-				response.getWriter().write(JSON.toJSONString("指令发送成功!"));
+				response.getWriter().write(JSON.toJSONString("指令发送成功"));
 			}else {
-				response.getWriter().write(JSON.toJSONString("发送失败，请检查设备是否已离线!"));
+				response.getWriter().write(JSON.toJSONString("发送失败请检查设备是否已离线"));
 			}
+		}else {
+			response.getWriter().write(JSON.toJSONString("指令发送失败"));
 		}
 		
 	}

@@ -32,7 +32,7 @@ public class AlarmDaoImpl implements AlarmDao{
 		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
 	///*	
 		return qr.update(
-				"INSERT INTO `wifi_project`.`alarm` (`userid`, `mac`, `type`, `power`, `temperature`, `date`) VALUES (?, ?, ?, ?, ?, ?)",
+				"INSERT INTO alarm (`userid`, `mac`, `type`, `power`, `temperature`, `date`) VALUES (?, ?, ?, ?, ?, ?)",
 				alarm.getUserid(), alarm.getMac(), alarm.getType(), alarm.getPower(), alarm.getTemperature(), alarm.getDate());
 	//*/
 	/*

@@ -17,7 +17,7 @@ public class PloyOperateDaoImpl implements PloyOperateDao {
 	public int insertPloyOperate(PloyOperate operate) throws Exception {
 		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
 //	/*	
-	 	return qr.update("INSERT INTO `wifi_project`.`ploy_operate` (`ployid`, `ployName`,`startDate`, `endDate`, "
+	 	return qr.update("INSERT INTO ploy_operate (`ployid`, `ployName`,`startDate`, `endDate`, "
 				+ "`hours`, `minutes`, `operateType`, `operateParam`, `state`, `param1`, `param2`) "
 				+ "VALUES (?,?,?,?,?,?,?,?,?,?,?)",operate.getPloyid(),operate.getPloyName(),operate.getStartDate(),operate.getEndDate(),operate.getHours(),
 				operate.getMinutes(),operate.getOperateType(),operate.getOperateParam(),operate.getState(),operate.getParam1(),operate.getParam2());	

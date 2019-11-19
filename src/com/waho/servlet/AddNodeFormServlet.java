@@ -31,6 +31,7 @@ public class AddNodeFormServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// 获取参数
 		request.setAttribute("userid", request.getParameter("userid"));
+		request.setAttribute("i18nLanguage", request.getParameter("i18nLanguage"));
 		// 调用逻辑
 		// 分发转向
 		request.getRequestDispatcher("/admin/addNodeForm.jsp").forward(request, response);

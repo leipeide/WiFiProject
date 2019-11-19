@@ -12,25 +12,46 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<form class="layui-form"
-		action="${pageContext.request.contextPath }/addWifToGroupServlet?groupid=${groupid}" method="post">
-		<div class="layui-form-item">
-			<label class="layui-form-label">请选择</label>
-			<div class="layui-input-block">
-				<input type="checkbox" id="checkAll" lay-filter="allChoose" lay-skin="primary">
-				<span id="chooseOrCancel">全选</span></br>
-				<c:forEach items="${wifis}" var="wifi">
-					<input type="checkbox" name="checkOne" value="${wifi.mac}" class="check" lay-skin="primary" title="${wifi.nodeName}"></br>
-				</c:forEach>
-			</div>
+	<form class="layui-form">
+		<!-- 隐藏标签，在系统总传递语言环境 -->
+		<input type="hidden" id="hiddenLan" value=${i18nLanguage } >
+		<div class="layui-form-item" style="margin-left:15px;margin-top:15px;">
+			<label class="i18n" name="PleaseSelect"></label>
+			<c:set var="length" scope="session" value="${wifiListSize }" />
+			<!-- 无节点，提示 -->
+	    	<c:if test="${length == 0}">
+				<div style="margin-top:30px;">
+					<span class="i18n" name="NoNodeToOperate" style="margin-left:50px;"></span>
+				</div>
+			</c:if>
+			<!-- 存在节点的情况下-->
+		    <c:if test="${length != 0}">
+				<div class="layui-input-block" style="margin-left:100px;">
+					<input type="checkbox" id="checkAll" lay-filter="allChoose" lay-skin="primary">
+					<span id="chooseOrCancel" class="i18n" name="LallCheck"></span></br>
+					<c:forEach items="${wifis}" var="wifi">
+						<input type="checkbox" name="checkOne" value="${wifi.mac}" class="check" lay-skin="primary" title="${wifi.nodeName}"></br>
+					</c:forEach>
+				</div>
+			</c:if>
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-input-block">
-				<button class="layui-btn">提交</button>
+				<a class="layui-btn layui-btn-sm" 
+				  onclick="submitBtn('${pageContext.request.contextPath }/addWifToGroupServlet',${groupid})">
+					<font class="i18n" name="Lsubmit"></font>  
+			    </a>
 			</div>
 		</div>
 	</form>
+	<script type="text/javascript" 
+		src="${pageContext.request.contextPath }/admin/js/jquery.min.js"></script>  
+ 	<script type="text/javascript"
+ 		src="${pageContext.request.contextPath }/admin/js/jquery.i18n.properties.js"></script>
 	<script type="text/javascript">
+	//1.全局变量，当前系统的语言环境
+	var i18nLanguage = jQuery("#hiddenLan").val();
+	//加载layui模块
 	layui.use('form', function(){
 		  var form = layui.form;
 		  //1.监听全选操作
@@ -38,22 +59,82 @@
 			  //2.是否被选中，true或者false
 			  var array = document.getElementsByName("checkOne");
 			  var span = document.getElementById("chooseOrCancel");
-			  if(data.elem.checked){
+			  if(data.elem.checked){//取消全选
 				 for(var index=0; index < array.length; index++){
 					 array[index].checked=true;
 				 }
-				 span.innerHTML="取消全选";
-			  }else{
+				 span.innerHTML=jQuery.i18n.prop("Lcancel");
+			  }else{//全选
 				  for(var index=0; index < array.length; index++){
 						 array[index].checked=false;
 					 }
-				  span.innerHTML="全选";
+				  span.innerHTML=jQuery.i18n.prop("LallCheck");
 			  }
 			  //3.更新渲染
 			  form.render();
 			});  
-		  
 		});
+
+    //3.重要：这里需要进行i18n的翻译；进入相应语言环境的语言库，翻译页面
+	jQuery.i18n.properties({
+	  	 name : 'common', //资源文件名称,本页面只用到common.properties
+	  	 path : 'admin/i18n/', //资源文件路径
+	  	 mode : 'both', //用Map的方式使用资源文件中的值
+	     language : i18nLanguage,
+	     callback : function() {//加载成功后设置显示内容
+	             // 第一类：layui的i18n
+	             var insertEle = jQuery(".i18n"); // 获得所有class为i18n的元素
+	             insertEle.each(function() {  // 遍历，根据i18n元素的 name 获取语言库对应的内容写入
+	            	 jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
+	              });
+	     	}
+	  });
+    
+	//4.提交函数
+	function submitBtn(url,groupid){
+		var checkboxValue = new Array(); //复选框值
+	    var checkboxObj = document.getElementsByName("checkOne");  
+		for(var i=0; i< checkboxObj.length; i++){
+			if(checkboxObj[i].checked){
+			    checkboxValue.push(checkboxObj[i].value);   				
+		    }
+		}
+		if(checkboxValue.length > 0){
+			jQuery.ajax({
+				  type:"post",
+		          url:url,
+		          data:{
+		            groupid:groupid,
+		            checkboxValue: checkboxValue.join(","),
+		          },
+		          async : true,
+		          datatype: "String",
+		          success:function(datasource, textStatus, jqXHR) {
+		        	 if(datasource > 0){
+		        		  layer.msg(datasource + " " + jQuery.i18n.prop('NAddNodeToGroupSuccess'),function(){
+			        		 location.reload();
+			        	  });
+		        	  }else if(datasource == '添加失败'){
+		        		  layer.msg(jQuery.i18n.prop('AddFailure'),function(){
+			        		  location.reload();
+			        	  });
+		        	  }else if(datasource == '提交失败'){
+		        		  layer.msg(jQuery.i18n.prop('submitFailed'),function(){
+			        		 location.reload();
+			        	  });
+		        	  }else{
+		        	
+		        	  } 	
+		          },
+		          error: function() {  
+		          	layer.msg(jQuery.i18n.prop('submitFailed'));	
+		          	}
+		  		});	
+		}else{
+			layer.msg(jQuery.i18n.prop('noChooseObj'));
+			
+		}
+	}
 	</script>
 </body>
 </html>

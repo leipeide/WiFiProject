@@ -45,16 +45,19 @@ public class PloyRunStateChangeServlet extends HttpServlet {
 			//3.分发转向
 			if(result > 0) {
 				if(runState == 1) {
-					response.getWriter().write("策略已执行!");
+					/**
+					 * 注意：此处的中文不要轻易的去改，涉及到前端判断字符串去查询相应的语言库，
+					 * 若修改，需要前后端统一
+					 */
+					response.getWriter().write("策略已执行");
 				}else if(runState == 0){
-					response.getWriter().write("停止执行!");
+					response.getWriter().write("停止执行");
 				}
 			}else {
-				response.getWriter().write("指令发送失败!");
+				response.getWriter().write("指令发送失败");
 			}
 		}else {
-			//String res = "参数不完整!";
-			response.getWriter().write("参数不完整!");
+			response.getWriter().write("参数不完整");
 		}
 	}
 

@@ -35,18 +35,17 @@ public class SwitchNodeServlet extends HttpServlet {
 		//1.获取表单数据
 		String nodeidStr = request.getParameter("nodeid");
 		String switchState = request.getParameter("switcher");
-		//System.out.println("switchState:"+switchState+";nodeid:"+nodeidStr);
 		//2.调用业务逻辑
 		if (nodeidStr != null) {// 数据有效
 			NodeService nodeService = new NodeServiceImpl();
 			int nodeid = Integer.parseInt(nodeidStr);
 			if (nodeService.switchNodeControl(nodeid, switchState)) {
 				//3.分发转向
-				Object res = "指令发送成功!";
+				Object res = "指令发送成功";
 				String dataJson = JSONObject.toJSONString(res);
 				response.getWriter().write(dataJson);
 			} else {
-				Object res = "指令发送失败，请检查设备是否已离线";
+				Object res = "指令发送失败请检查设备是否已离线";
 				String dataJson = JSONObject.toJSONString(res);
 				response.getWriter().write(dataJson);
 			}

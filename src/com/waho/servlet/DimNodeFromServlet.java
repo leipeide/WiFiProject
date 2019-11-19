@@ -30,8 +30,10 @@ public class DimNodeFromServlet extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		//1.获取参数
 		String nodeid = request.getParameter("nodeid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		//2.分发转向
 		request.setAttribute("nodeid", nodeid);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/dimNodeForm.jsp").forward(request, response);
 	}
 

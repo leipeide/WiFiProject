@@ -30,8 +30,10 @@ public class AddBallastGroupFromServlet extends HttpServlet {
 		response.setContentType("text/html;harset=utf-8");
 		//1.获取表单数据
 		String userid = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		//2.分发转向
 		request.setAttribute("userid", userid);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/addBallastGroupFrom.jsp").forward(request, response);
 	}
 

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.waho.dao.GroupDao;
 import com.waho.dao.impl.GroupDaoImpl;
 import com.waho.domain.Group;
@@ -33,7 +34,8 @@ public class AddBallastGroupServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html;charset=utf-8");
+		response.setContentType("applicaton/json;charset=utf-8");
+	//	response.setContentType("text/html;charset=utf-8");
 		//1.获取表单数据
 		String userid = request.getParameter("userid");
 		String groupName = request.getParameter("newName");
@@ -45,12 +47,15 @@ public class AddBallastGroupServlet extends HttpServlet {
 				Group group = groupDao.selectGroupByGroupNameAndUserid(groupName,Integer.parseInt(userid));
 				if(group == null) {
 					if(userService.addBalletGroupToUser(groupName,Integer.parseInt(userid))) {
-						response.getWriter().write("新建分组成功！");
+						 response.getWriter().write(JSON.toJSONString("新建分组成功"));
+						//response.getWriter().write("新建分组成功");
 					}else {
-						response.getWriter().write("新建分组失败！");
+						 response.getWriter().write(JSON.toJSONString("新建分组失败"));
+						//response.getWriter().write("新建分组失败");
 					}
 				}else {
-					response.getWriter().write("该分组已存在！");
+					response.getWriter().write(JSON.toJSONString("该分组已存在"));
+					//response.getWriter().write("该分组已存在");
 				}
 				
 			} catch (NumberFormatException e) {
@@ -61,7 +66,8 @@ public class AddBallastGroupServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 		}else {
-			response.getWriter().write("新建分组失败！");
+		   	 response.getWriter().write(JSON.toJSONString("新建分组失败"));
+			//response.getWriter().write("新建分组失败");
 		}
 		
 	}

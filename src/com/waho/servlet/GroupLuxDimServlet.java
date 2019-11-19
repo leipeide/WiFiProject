@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.waho.service.UserService;
 import com.waho.service.impl.UserServiceImpl;
 
@@ -30,7 +31,7 @@ public class GroupLuxDimServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html;charset=utf-8");
+		response.setContentType("application/json;charset=utf-8");
 		//1.获取表单上数据
 		String useridStr = request.getParameter("userid");
 		String groupidStr = request.getParameter("groupid");
@@ -44,23 +45,29 @@ public class GroupLuxDimServlet extends HttpServlet {
 			int groupid = Integer.parseInt(groupidStr);
 			int luxParam = Integer.parseInt(luxParamStr);
 			String Cmd = "";
-			if(switchState != null && switchState.equals("on")) {
+			if(switchState != null && switchState.equals("true")) {
 				Cmd = "autoluxdim";
 			} else {
 				Cmd = "luxdim";
 			}
 			UserService us = new UserServiceImpl();
 			int result = us.groupWriteLuxDimCmd(userid,groupid,luxParam,Cmd);
-			//3.分发转向
+		    /**
+		     * 3.分发转向
+			 * 注意：此处的中文不要轻易的去改，涉及到前端判断字符串去查询相应的语言库，
+			 * 若修改，需要前后端统一
+			 */
 			if(result > 0) {
-				response.getWriter().write("成功发送了" + result + "条调光指令！");
+				//返回成功发送指令的数量
+				response.getWriter().write(JSON.toJSONString(result));
 			}else {
-				response.getWriter().write("指令发送失败，请检查设备是否离线或分组内无节点！");
+				response.getWriter().write(JSON.toJSONString("设备离线或分组内无节点"));
 			}
 			return;
 		}
 		//3.分发转向
-		response.getWriter().write("提交失败！");
+		response.getWriter().write(JSON.toJSONString("提交失败"));
+		
 	}
 
 	/**

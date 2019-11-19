@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.waho.service.UserService;
 import com.waho.service.impl.UserServiceImpl;
 
@@ -32,14 +33,14 @@ public class AddNodeServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html;charset=UTF-8");
+		response.setContentType("application/json;charset=UTF-8");
 		UserService us = new UserServiceImpl();
 		// 获取表单数据
 		String useridStr = request.getParameter("userid");
 		String nodeMac = request.getParameter("nodeMac");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 
 		if (useridStr != null && "".equals(useridStr) == false && nodeMac != null && "".equals(nodeMac) == false) {
 			int userid = Integer.parseInt(useridStr);
@@ -47,14 +48,31 @@ public class AddNodeServlet extends HttpServlet {
 			// 调用业务逻辑
 			int result = us.addNodeToUser(nodeMac, userid);
 			if (result > 0) {
-				// 分发转向
-				response.getWriter().write("添加成功！");
+				if(i18nLanguageStr.equals("zh-CN")) {
+					// 分发转向
+					response.getWriter().write(JSON.toJSONString(nodeMac+" 已添加到当前用户！"));
+				}else {
+					response.getWriter().write(JSON.toJSONString(nodeMac+" successfully added node to current user!"));
+				}
+				
 			} else {
-				response.getWriter().write("添加失败！");
+				if(i18nLanguageStr.equals("zh-CN")) {
+					// 分发转向
+					response.getWriter().write(JSON.toJSONString(nodeMac+" 添加失败！"));
+				}else {
+					response.getWriter().write(JSON.toJSONString(nodeMac+" add failure!"));
+				}
 			}
 			return;
 		}
-		response.getWriter().write("添加失败!");
+		
+		if(i18nLanguageStr.equals("zh-CN")) {
+			// 分发转向
+			response.getWriter().write(JSON.toJSONString(nodeMac+" 添加失败！"));
+		}else {
+			response.getWriter().write(JSON.toJSONString(nodeMac+" add failure!"));
+		}
+		
 	}
 
 	/**

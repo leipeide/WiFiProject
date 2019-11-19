@@ -2,6 +2,7 @@ package com.waho.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -10,6 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
+import com.waho.dao.NodeDao;
+import com.waho.dao.impl.NodeDaoImpl;
+import com.waho.domain.Node;
 import com.waho.service.UserService;
 import com.waho.service.impl.UserServiceImpl;
 
@@ -32,40 +37,38 @@ public class RemoveNodeServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html;charset=UTF-8");
-		UserService us = new UserServiceImpl();
+		response.setContentType("application/json;charset=UTF-8");
 		// 获取表单数据
 		String useridStr = request.getParameter("userid");
-		if (useridStr != null && "".equals(useridStr) == false) {  //判断字符串不为空
-			int userid = Integer.parseInt(useridStr);
-			Map<String, String[]> map = request.getParameterMap();
-			ArrayList<Integer> idList = new ArrayList<Integer>();
-			//map的遍历
-			for (Map.Entry<String, String[]> entry : map.entrySet()) {//map里的每一个键值对取出来封装成一个Entry对象在存到一个Set里面
-				// System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue()[0]);
-				if (entry.getKey().startsWith("id") && "on".equals(entry.getValue()[0])) {
-					idList.add(Integer.parseInt(entry.getKey().substring(2)));
-					//System.out.println("年后"+idList);
-				}
-			}
-			if (idList.size() > 0) {// 数据有效
-				// 调用业务逻辑
-				int result = us.removeNodeById(idList, userid);
-				if (result > 0) {
-					// 分发转向
-					response.getWriter().write("成功删除了" + result + "条数据!");
-				} else {
-					response.getWriter().write("删除失败！");
-				}
-				return;
-			}
+		String nodeIdArrStr =  request.getParameter("nodeIdArr"); //节点id字符串
+		String[] nodeIdArr =  nodeIdArrStr.split(","); //以","分隔节点id字符串得到多个节点id
+		//字符串转集合
+		ArrayList<Integer> idList = new ArrayList<Integer>();
+		for(int i=0; i < nodeIdArr.length; i++) {
+			idList.add(Integer.parseInt(nodeIdArr[i]));
 		}
-		response.getWriter().write("删除失败!");
+		//处理业务逻辑，从用户下移除节点
+		if(useridStr != null && "".equals(useridStr) == false) { //参数正常
+			UserService us = new UserServiceImpl();
+			int userid = Integer.parseInt(useridStr);
+			int result = us.removeNodeById(idList, userid);   
+            /**
+             * 分发转向
+             * 注意：此处的中文不要轻易的去改，涉及到前端判断字符串去查询相应的语言库;
+             * 若修改，需要前后端统一
+             */
+			if(result > 0) {
+				response.getWriter().write(JSON.toJSONString(result));
+			}else {
+				response.getWriter().write(JSON.toJSONString("移除失败"));
+			}
+			
+		}else {//参数为空
+			response.getWriter().write(JSON.toJSONString("提交失败"));
+		}
 	}
-
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)

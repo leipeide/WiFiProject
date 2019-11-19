@@ -34,7 +34,6 @@ public class AddPloyOperateServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
-		//response.setContentType("application/json; charset=utf-8");
 		response.setContentType("text/html; charset=utf-8");
 		
 		//1.获取功能类型字符串；
@@ -46,9 +45,7 @@ public class AddPloyOperateServlet extends HttpServlet {
 		String minutesStr = request.getParameter("minutes"); //策略操作执行的时间：分钟
 		String startDateStr = request.getParameter("startDate"); //策略操作执行的日期范围：开始日期
 		String endDateStr = request.getParameter("endDate"); //策略操作执行的日期范围：结束日期
-		//System.out.println("useridStr:"+useridStr+";functionParam:"+functionParamStr+";ployidStr:"+ ployidStr+
-		//";hoursStr:"+hoursStr+";minutesStr:"+minutesStr+";startDateStr:"+startDateStr+";endDateStr:"+endDateStr);
-	
+		
 		//2.处理业务逻辑
 		if(functionStr != "" && functionParamStr != "" && useridStr != "" && ployidStr != "" 
 				&& hoursStr != "" && minutesStr != "" && startDateStr != "" && endDateStr != "") {
@@ -62,35 +59,39 @@ public class AddPloyOperateServlet extends HttpServlet {
 		    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		    
 			try {
-				
 					Date startDate = simpleDateFormat.parse(startDateStr);
 					Date endDate = simpleDateFormat.parse(endDateStr);
 				    if(functionParamStr.equals("true")) {
 				    	value = 1;
-				    }else if(functionParamStr.equals("false") == false) {
+				    }else if(functionParamStr.equals("false")) {
+				    	value = 0;
+				    }else {
 				    	value = Integer.parseInt(functionParamStr);
 				    }
 					UserService us = new UserServiceImpl();
 					
-					//3.判断功能类型，执行相应的功能函数
+					/**
+					 * 3.判断功能类型，执行相应的功能函数
+					 * 注意：此处的中文不要轻易的去改，涉及到前端判断字符串去查询相应的语言库，
+					 * 若修改，需要前后端统一
+					 */
 					if(functionStr.equals("switch")) { // 添加开关灯策略操作
 						boolean result = us.addPloyOperateOfSwitch(userid,ployid,hours,minutes,startDate,endDate,value);
 						if(result) {
-							String res = "操作成功!";
+							String res = "操作成功";
 							response.getWriter().write(res);
 						}else {
-							String res = "操作失败!";
+							String res = "操作失败";
 							response.getWriter().write(res);
 						}
-						
 						
 					}else if(functionStr.equals("dim")) { // 添加调光策略操作
 						boolean result = us.addPloyOperateOfDim(userid,ployid,hours,minutes,startDate,endDate,value);
 						if(result) {
-							String res = "操作成功!";
+							String res = "操作成功";
 							response.getWriter().write(res);
 						}else {
-							String res = "操作失败!";
+							String res = "操作失败";
 							response.getWriter().write(res);
 						}
 						
@@ -98,10 +99,10 @@ public class AddPloyOperateServlet extends HttpServlet {
 					}else {// 添加调色策略操作
 						boolean result = us.addPloyOperateOfToning(userid,ployid,hours,minutes,startDate,endDate,value);
 						if(result) {
-							String res = "操作成功!";
+							String res = "操作成功";
 							response.getWriter().write(res);
 						}else {
-							String res = "操作失败!";
+							String res = "操作失败";
 							response.getWriter().write(res);
 						}
 					}
@@ -114,7 +115,7 @@ public class AddPloyOperateServlet extends HttpServlet {
 			}
 		   
 		}else {
-			String res = "参数不完整!";
+			String res = "参数不完整";
 			response.getWriter().write(res);
 		}
 		

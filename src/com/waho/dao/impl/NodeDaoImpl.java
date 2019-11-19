@@ -25,7 +25,7 @@ public class NodeDaoImpl implements NodeDao {
 		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
 	///*	
 	 	return qr.update(
-				"INSERT INTO `wifi_project`.`node` (`mac`, `nodeName`, `type`, `power`, `precentage`, `switchState`, `ssid`, `pw`, `userid`, `temperature`, `humidity`, `online`, `lux`, `colorPrecentage`,`groupState`,`lastOperateType`,`param2`,`param3`,`param4`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+				"INSERT INTO node (`mac`, `nodeName`, `type`, `power`, `precentage`, `switchState`, `ssid`, `pw`, `userid`, `temperature`, `humidity`, `online`, `lux`, `colorPrecentage`,`groupState`,`lastOperateType`,`param2`,`param3`,`param4`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 				node.getMac(), node.getNodeName(), node.getType(), node.getPower(), node.getPrecentage(),
 				node.getSwitchState(), node.getSsid(), node.getPw(), node.getUserid(), node.getTemperature(),
 				node.getHumidity(), node.isOnline(),node.getLux(),node.getColorPrecentage(),node.getGroupState(),

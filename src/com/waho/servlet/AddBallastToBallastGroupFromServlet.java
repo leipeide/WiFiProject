@@ -37,6 +37,7 @@ public class AddBallastToBallastGroupFromServlet extends HttpServlet {
 		//1.获取表单数据
 		String groupid = request.getParameter("groupid");
 		String userid = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
  		//2.处理业务逻辑
 		UserService us = new UserServiceImpl();
 		List<Node> ballests = us.getBallastNodes(Integer.parseInt(userid));
@@ -45,7 +46,10 @@ public class AddBallastToBallastGroupFromServlet extends HttpServlet {
 			request.setAttribute("ballests", ballests);
 			
 		}
+	
 		request.setAttribute("groupid", groupid);
+		request.setAttribute("bListSize", ballests.size());
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/addBallestToBallestGroupFrom.jsp").forward(request, response);
 	}
 

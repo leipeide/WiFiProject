@@ -36,6 +36,7 @@ public class ReturnHomeServlet extends HttpServlet {
 		response.setContentType("text/html;charset = UTF-8");
 		//1.获取表单数据
 		String userid = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		//2.调用业务逻辑
 		if(userid != null) {
 			User user = new User();
@@ -45,6 +46,7 @@ public class ReturnHomeServlet extends HttpServlet {
 			Map<String, Object> result = us.returnHome(user.getUsername(),user.getPassword());
 		//3.分发转向
 			request.setAttribute("result", result);
+			request.setAttribute("i18nLanguage", i18nLanguageStr);
 			request.getRequestDispatcher("/admin/home.jsp").forward(request, response);	
 		}
 	}

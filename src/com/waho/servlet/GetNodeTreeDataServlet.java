@@ -36,11 +36,12 @@ public class GetNodeTreeDataServlet extends HttpServlet {
 		response.setContentType("application/json;charset=utf-8");
 		//1.获取表单数据
 		String userid = request.getParameter("id");
-		//System.out.println("userid:"+userid);
+		String i18nLanguageStr = request.getParameter("i18nLanguage"); //当前系统语言环境类型
+		//System.out.println("i18nLanguageStr:"+i18nLanguageStr+"userid:"+userid);
 		//2.处理业务逻辑
 		if(null != userid && ""!= userid) {
 			UserService us = new UserServiceImpl();
-			Map<String,Object> nodeMap  = us.getNodeListByUserid(Integer.parseInt(userid));
+			Map<String,Object> nodeMap  = us.getNodeListByUserid(Integer.parseInt(userid),i18nLanguageStr);
 			//3.分发转向
 			response.getWriter().write(JSON.toJSONString(nodeMap));
 			//System.out.println(JSON.toJSONString(nodeMap));

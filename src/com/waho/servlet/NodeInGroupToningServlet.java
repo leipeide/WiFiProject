@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.waho.service.NodeService;
 import com.waho.service.impl.NodeServiceImpl;
 
@@ -30,7 +31,7 @@ public class NodeInGroupToningServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html;charset=utf-8");
+		response.setContentType("application/json;charset=utf-8");
 		// 1.获取表单数据
 		String nodeidStr = request.getParameter("nodeid");
 		String tonPercentageStr = request.getParameter("tonPercentage");
@@ -42,10 +43,12 @@ public class NodeInGroupToningServlet extends HttpServlet {
 			Boolean result = nodeService.NodeInGroupToningCmd(nodeid,tonPercentage);
 			// 3.分发转向
 			if(result) {
-				response.getWriter().write("指令发送成功!");
+				response.getWriter().write(JSON.toJSONString("指令发送成功"));
 			}else {
-				response.getWriter().write("发送失败，请检查设备是否已离线!");
+				response.getWriter().write(JSON.toJSONString("发送失败请检查设备是否已离线"));
 			}
+		}else {
+			response.getWriter().write(JSON.toJSONString("参数不完整"));
 		}
 	}
 

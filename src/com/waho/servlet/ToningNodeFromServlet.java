@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.waho.domain.Node;
+import com.waho.service.UserService;
+import com.waho.service.impl.UserServiceImpl;
+
 /**
  * Servlet implementation class ToningNodeFromServlet
  */
@@ -30,8 +34,13 @@ public class ToningNodeFromServlet extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		//1.获取表单数据
 		String nodeid = request.getParameter("nodeid");
-		//2.分发转向
-		request.setAttribute("nodeid", nodeid);
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
+		//2.处理业务逻辑
+		UserService us = new UserServiceImpl();
+		Node node = us.getNodeByIdString(nodeid);
+		//3.分发转向
+		request.setAttribute("node", node);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/ledNodeToning.jsp").forward(request, response);
 	}
 

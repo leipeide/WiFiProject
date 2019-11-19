@@ -36,6 +36,7 @@ public class RemoveNodeFormServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// 获取参数
 		String userid = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		int id = Integer.parseInt(userid);
 		// 调用逻辑
 		UserService us = new UserServiceImpl();
@@ -43,6 +44,7 @@ public class RemoveNodeFormServlet extends HttpServlet {
 		// 分发转向
 		request.setAttribute("nodeList", nodeList);
 		request.setAttribute("userid", userid);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/removeNodeForm.jsp").forward(request, response);
 
 	}

@@ -37,6 +37,7 @@ public class AddLedToLedGroupFromServlet extends HttpServlet {
 		//1.获取表单数据
 		String groupid = request.getParameter("groupid");
 		String userid = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
  		//2.处理业务逻辑
 		if(groupid != null && "".equals(groupid) == false && userid != null && "".equals(userid) == false) {
 			UserService us = new UserServiceImpl();
@@ -46,6 +47,8 @@ public class AddLedToLedGroupFromServlet extends HttpServlet {
 				request.setAttribute("leds", leds);
 			}
 			request.setAttribute("groupid", groupid);
+			request.setAttribute("ledListSize", leds.size());
+			request.setAttribute("i18nLanguage", i18nLanguageStr);
 			request.getRequestDispatcher("/admin/addLedToLedGroupFrom.jsp").forward(request, response);
 		}
 	}

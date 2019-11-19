@@ -35,12 +35,14 @@ public class GroupFromServlet extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		//1.获取表单数据
 		String userid = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		//2.处理业务逻辑
 		UserService userService = new UserServiceImpl();
 		Map<String,Object> GroupMap = userService.getGroupByUserid(Integer.parseInt(userid));
 		//3.分发转向
 		request.setAttribute("userid", userid);
 		request.setAttribute("GroupMap", GroupMap);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/groupFrom.jsp").forward(request, response);
 	}
 

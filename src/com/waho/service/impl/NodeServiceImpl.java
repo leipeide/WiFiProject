@@ -146,9 +146,10 @@ public class NodeServiceImpl implements NodeService {
 						String cmdStr = JSON.toJSONString(cmd);
 						socket.sendMessage(cmdStr);
 						logger.info("service to " + node.getMac() + ":" + cmdStr);
-						//2.记录此次操作类型lastOperateType;
+					/*	//2.记录此次操作类型lastOperateType;
 						String operateType = "dim";
 						nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
+						*/
 						return true;
 					}
 				}
@@ -241,6 +242,7 @@ public class NodeServiceImpl implements NodeService {
 								    	operateType = "close";
 								    }
 									nodeDao.updateLastOperateTypeByNodeid(operateType,obj.getId());
+							
 								}else if(functionStr.equals("dim")) { // led调光指令
 									cmd.setMsg("request");
 								    cmd.setCmd("write");
@@ -253,9 +255,10 @@ public class NodeServiceImpl implements NodeService {
 									cmd.setMsg("request");
 								    cmd.setCmd("toning");
 							    	cmd.setColorPrecentage(paramValue);
-							    	//2.记录此次操作类型lastOperateType;
+							    /*	//2.记录此次操作类型lastOperateType;
 									String operateType = "toning";
 									nodeDao.updateLastOperateTypeByNodeid(operateType,obj.getId());
+								*/
 								}
 								// 5.发送json格式的指令
 								String cmdStr = JSON.toJSONString(cmd);
@@ -310,14 +313,15 @@ public class NodeServiceImpl implements NodeService {
 								    	operateType = "close";
 								    }
 									nodeDao.updateLastOperateTypeByNodeid(operateType,obj.getId());
+								
 								}else if(functionStr.equals("dim")) { // 镇流器调光指令
 									cmd.setMsg("request");
 								    cmd.setCmd("write");
 								    cmd.setPrecentage(paramValue);
 								    cmd.setSwitchState(obj.getSwitchState());
 								    //4.记录此次操作类型lastOperateType;
-									String operateType = "dim";
-									nodeDao.updateLastOperateTypeByNodeid(operateType,obj.getId());
+									//String operateType = "dim";
+									//nodeDao.updateLastOperateTypeByNodeid(operateType,obj.getId());
 								}
 								// 4.发送json格式的指令
 								String cmdStr = JSON.toJSONString(cmd);
@@ -358,14 +362,14 @@ public class NodeServiceImpl implements NodeService {
 								Message cmd = new Message();
 								cmd.setMsg("request");
 							    cmd.setCmd(Cmd);
-							    System.out.println(Cmd);
 							    cmd.setLux(luxParam);
 								String cmdStr = JSON.toJSONString(cmd);
 								socket.sendMessage(cmdStr);
 								logger.info("service to " + obj.getMac() + ":" + cmdStr);
-								 //4.记录此次操作类型lastOperateType;
+							/*	 //4.记录此次操作类型lastOperateType;
 								String operateType = "luxdim";
 								nodeDao.updateLastOperateTypeByNodeid(operateType,obj.getId());
+							*/
 								return true;
 								
 							}
@@ -440,9 +444,11 @@ public class NodeServiceImpl implements NodeService {
 						String cmdStr = JSON.toJSONString(cmd);
 						socket.sendMessage(cmdStr);
 						logger.info("service to " + node.getMac() + ":" + cmdStr);
-						 //4.记录此次操作类型lastOperateType;
+					   /*	
+					    *  //4.记录此次操作类型lastOperateType;
 						String operateType = "dim";
 						nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
+						*/
 						return true;
 					}
 				}
@@ -471,9 +477,10 @@ public class NodeServiceImpl implements NodeService {
 						String cmdStr = JSON.toJSONString(cmd);
 						socket.sendMessage(cmdStr);
 						logger.info("service to " + node.getMac() + ":" + cmdStr);
-						 //4.记录此次操作类型lastOperateType;
+					/*	 //4.记录此次操作类型lastOperateType;
 						String operateType = "toning";
 						nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
+						*/
 						return true;
 					}
 				}

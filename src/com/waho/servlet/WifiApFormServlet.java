@@ -36,6 +36,7 @@ public class WifiApFormServlet extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		//1.获取表单数据
 		String userid = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		
 		//2.处理业务逻辑
 		/*
@@ -46,6 +47,7 @@ public class WifiApFormServlet extends HttpServlet {
 			request.setAttribute("nodeMap", nodeMap);
 		}*/
 		request.setAttribute("userid", userid);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/wifiApForm.jsp").forward(request, response);
 	}
 

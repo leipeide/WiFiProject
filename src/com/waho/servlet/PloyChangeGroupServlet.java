@@ -32,10 +32,32 @@ public class PloyChangeGroupServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
-	
+		
 		//1.获取表单数据:策略id,重新绑定的分组id
 		String ployIdStr = request.getParameter("ployid");
 		String groupIdStr = request.getParameter("oneCheck");
+		if(null != ployIdStr && "" != ployIdStr && null != groupIdStr && "" != groupIdStr) {
+			int ployid = Integer.parseInt(ployIdStr);
+			int groupid = Integer.parseInt(groupIdStr);
+			UserService us = new UserServiceImpl();
+			Boolean result = us.changePloyGroup(ployid,groupid);
+			//3.分发转向
+			if(result) {
+				String res = "重新绑定分组成功";
+				response.getWriter().write(res);	
+			}else {
+				String res = "重新绑定分组失败";
+				response.getWriter().write(res);	
+			}
+		}else {
+			String res = "提交失败";
+			response.getWriter().write(res);	
+		}
+		
+	/*	//1.获取表单数据:策略id,重新绑定的分组id
+		String ployIdStr = request.getParameter("ployid");
+		String groupIdStr = request.getParameter("oneCheck");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		
 		//2.处理业务逻辑
 		if(null != ployIdStr && "" != ployIdStr && null != groupIdStr && "" != groupIdStr) {
@@ -45,16 +67,32 @@ public class PloyChangeGroupServlet extends HttpServlet {
 			Boolean result = us.changePloyGroup(ployid,groupid);
 			//3.分发转向
 			if(result) {
-				String res = "已重新绑定分组";
-				response.getWriter().write(res);
+				if(i18nLanguageStr.equals("zh-CN")) {
+					String res = "重新绑定分组成功！";
+					response.getWriter().write(res);	
+				}else {
+					String res = "Rebind group succeeded!";
+					response.getWriter().write(res);
+				}
 			}else {
-				String res = "绑定分组失败";
-				response.getWriter().write(res);
+				if(i18nLanguageStr.equals("zh-CN")) {
+					String res = "重新绑定分组失败！";
+					response.getWriter().write(res);	
+				}else {
+					String res = "Rebind group failed!";
+					response.getWriter().write(res);
+				}
 			}
 		}else {
-			String res = "绑定分组失败";
-			response.getWriter().write(res);
+			if(i18nLanguageStr.equals("zh-CN")) {
+				String res = "重新绑定分组失败！";
+				response.getWriter().write(res);	
+			}else {
+				String res = "Rebind group failed!";
+				response.getWriter().write(res);
+			}
 		}
+		*/
 	}
 
 	/**

@@ -22,7 +22,7 @@ public class UserDaoImpl implements UserDao {
 		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
 //	/*	
 	 	return qr.update(
-				"INSERT INTO `wifi_project`.`user` (`username`,`password`,`email`) VALUES (?, ?, ?)",
+				"INSERT INTO user (`username`,`password`,`email`) VALUES (?, ?, ?)",
 				user.getUsername(), user.getPassword(), user.getEmail());
 	//	*/
 		

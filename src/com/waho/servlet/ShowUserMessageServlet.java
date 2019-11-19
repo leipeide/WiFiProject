@@ -35,14 +35,17 @@ public class ShowUserMessageServlet extends HttpServlet {
 		
 		//1.获取表单数据
 		String userid = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
+		//System.out.println("SHOWUserMessage+i18nLanguage:"+i18nLanguageStr);
 		//2.调用业务逻辑
 		if(userid != null) { 
 			//查找用户信息
 			User user = new User();
 			UserService us = new UserServiceImpl();
 			user = us.getUserMessage(Integer.parseInt(userid));
-		//3.分发转向	
+			//3.分发转向	
 			request.setAttribute("user", user);
+			request.setAttribute("i18nLanguage", i18nLanguageStr);
 			request.getRequestDispatcher("/admin/userMessagePage.jsp").forward(request, response);
 			
 		}

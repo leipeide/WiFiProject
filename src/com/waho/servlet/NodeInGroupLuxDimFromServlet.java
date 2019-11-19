@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.waho.domain.Node;
+import com.waho.service.UserService;
+import com.waho.service.impl.UserServiceImpl;
+
 /**
  * Servlet implementation class NodeInGroupLuxDimFromServlet
  */
@@ -30,8 +34,10 @@ public class NodeInGroupLuxDimFromServlet extends HttpServlet {
 		response.setContentType("text/html'charset=utf-8");
 		// 1.获取表单数据
 		String nodeid = request.getParameter("nodeid");
-		// 2.分发转向
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
+		// 3.分发转向
 		request.setAttribute("nodeid", nodeid);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/nodeInGroupLuxDimForm.jsp").forward(request, response);
 	}
 

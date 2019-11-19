@@ -40,7 +40,7 @@ public class PloyChangeGroupFormServlet extends HttpServlet {
 		String groupIdStr = request.getParameter("groupid");
 		String ployid = request.getParameter("ployid");
 		String userIdStr = request.getParameter("userid");
-		//System.out.println("groupTypeStr:"+groupTypeStr+"groupIdStr："+groupIdStr+"ployid:"+ployid+"userIdStr:"+userIdStr);
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		//2.初始化group集合
 		List<Group> groupList = new ArrayList<>();
 		//3.处理业务逻辑
@@ -56,7 +56,9 @@ public class PloyChangeGroupFormServlet extends HttpServlet {
 		}
 		//4.分发转向
 		request.setAttribute("groupList", groupList);
+		request.setAttribute("groupListSize", groupList.size()); //分组的集合大小
 		request.setAttribute("ployid", ployid);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/ployChangeGroupForm.jsp").forward(request, response);
 		
 		

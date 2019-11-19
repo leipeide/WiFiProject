@@ -54,9 +54,10 @@ public interface UserService {
 	 * 节点重命名，成功返回true，失败返回false
 	 * @param nodeid 要修改的节点id
 	 * @param nodeName 新的节点名称
+	 * @param i18nLanguage 当前系统语言环境
 	 * @return
 	 */
-	String userRenameNode(String nodeid, String nodeName);
+	String userRenameNode(String nodeid, String nodeName, String i18nLanguage);
 
 	/**
 	 * 根据用户id获取节点信息
@@ -376,11 +377,12 @@ public interface UserService {
 	 */
 	int deleteAlarmMessage(String[] alarmIdArr);
 	/**
-	 * 
+	 * 根据类型获取节点，返回MAP集合
 	 * @param 用户id
+	 * @i18nLanguage 系统语言环境类型
 	 * @return
 	 */
-	Map<String, Object> getNodeListByUserid(int userid);
+	Map<String, Object> getNodeListByUserid(int userid,String i18nLanguage);
 	/**
 	 * 恢复节点Ap模式
 	 * @param nodeIdArr

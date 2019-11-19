@@ -9,10 +9,13 @@
 	href="${pageContext.request.contextPath }/layui/css/layui.css">
 <script type="text/javascript"
 	src="${pageContext.request.contextPath }/layui/layui.js"></script>
-<title>Insert title here</title>
+<script type="text/javascript" 
+		src="${pageContext.request.contextPath }/admin/js/jquery.min.js"></script>  
+<script type="text/javascript"
+ 		src="${pageContext.request.contextPath }/admin/js/jquery.i18n.properties.js"></script>
 </head>
 <body>
-	<%
+ 	<%
 //搜索节点错误返回节点页面提示错误信息
      Object message = request.getAttribute("message");
      if(message!=null && !"".equals(message)){
@@ -20,38 +23,44 @@
 	<script type="text/javascript">
       		layui.use('layer', function() {
 				var layer = layui.layer;
-				layer.alert('<%=message%>',{
+				layer.msg('<%=message%>',{
 					offset:['50px','350px']
 				});  
 			});
       </script>
 	<%} %>
-	<form class="layui-form"
-		action="${pageContext.request.contextPath }/deleteAlarmMessageServlet"
-		method="post">
-		<input type="hidden" id="userid" name="userid" value="${userid}">
-		<button class="layui-btn" lay-submit lay-filter="*">删除记录</button>
-		<table class="layui-table">
+	
+	<form class="layui-form" action="${pageContext.request.contextPath }/deleteAlarmMessageServlet" method="post">
+ 		<input type="hidden" id="userid" name="userid" value="${userid}"> 
+		<!--  此处的name属性不可动 -->
+		<input type="hidden" id="hiddenLan" name="i18nLanguage" value="${i18nLanguage}"> 
+			<button class="layui-btn layui-btn-sm" lay-submit lay-filter="">
+				<font class="i18n" name="DelRecord"></font>
+			</button>
+		<table class="layui-table" lay-size="sm">
 			<colgroup>
 				<col width="30">
-				<col width="120">
+				<col width="220">
+				<col width="220">
+				<col width="200">
 			</colgroup>
 			<thead>
 				<tr>
 					<th><input type="checkbox" id="checkAll" lay-skin="primary"
 						lay-filter="allChoose"></th>
-					<th>节点地址</th>
-					<th>报警原因</th>
-					<th>参数</th>
-					<th>报警时间</th>
+					<th class="i18n" name="LmacAddr"></th>
+					<th class="i18n" name="LAlarmReason"></th>
+					<th class="i18n" name="LParam"></th>
+					<th class="i18n" name="LAlarmTime"></th>
 				</tr>
 			</thead>
-			<!-- ajax动态获取表格内容 -->
+			<!--注意： ajax动态获取表格内容 -->
 			<tbody id="tbody"></tbody>
 		</table>
 		<div id="paging" style="margin-left: 40%"></div>
 	</form>
 	<script>
+		//1.加载layui模块
 		layui.use(['form'], function() {
 			var form = layui.form;
 			form.render();
@@ -71,11 +80,31 @@
 			});        
 
 		});
+		
+		//2. 获取id为hiddenLan的value值，i18nLanguage为全局变量，是当前系统的语言环境
+		var i18nLanguage = jQuery("#hiddenLan").val(); 
+
+		//3.重要：这里需要进行i18n的翻译；进入相应语言环境的语言库，翻译页面
+		jQuery.i18n.properties({
+		  	 name : 'common', //资源文件名称,本页面只用到common.properties
+		  	 path : 'admin/i18n/', //资源文件路径
+		  	 mode : 'both', //用Map的方式使用资源文件中的值
+		       language : i18nLanguage,
+		       callback : function() {//加载成功后设置显示内容
+		             // 第一类：class未使用layui的框架；自己命名的i18n
+		             var insertEle =jQuery(".i18n"); // 获得所有id为i18n的元素
+		             insertEle.each(function() {  // 遍历insertEle，根据i18n元素的 name 获取语言库对应的内容写入
+		            	 jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
+		              });
+		     }
+		  
+		  });
+		
 		/**
-		 * 获取报警数量提示
+		 *4.ajax动态获取报警信息
 		 * @returns
 		 */
-		//A.创建XMLHttpRequest对象,获取“报警”栏信息数量提示
+		//A.创建XMLHttpRequest对象,获取报警信息
 		function getXMLHttpRequest() {
 				var xmlhttp;
 				if (window.XMLHttpRequest) {
@@ -106,11 +135,14 @@
 								<td>" + alarm.mac + "</td>\
 								<td>";
 								if (alarm.type == 1) {
-									inner = inner + "节点过功率";
+									inner = inner + jQuery.i18n.prop('LOverpower');
+									//inner = inner + "节点过功率";
 								} else if(alarm.type == 2){
-									inner = inner + "节点断开连接";
+									inner = inner + jQuery.i18n.prop('NodeDisconnected');
+									//inner = inner + "节点断开连接";
 								} else if(alarm.type == 3){
-									inner = inner + "节点高温报警";
+									inner = inner + jQuery.i18n.prop('HighTemperature');
+									//inner = inner + "节点高温报警";
 								}
 								inner = inner + "</td>\
 								<td>";
@@ -140,9 +172,12 @@
 				//2.发送请求
 				req.send("userid="+userid);
 			}
+			
+			
 			window.onload = function() {
 				AjaxGetAlarmMessageRequest();
 			}
+			
 			/*
 			*注意：
 			*页面刷新，指定2分钟刷新一次；
@@ -150,7 +185,6 @@
 			*故不需要刷新太频繁，在此将刷新时间设置为2分钟
 			*/
 			setInterval(AjaxGetAlarmMessageRequest,1000*60*2);
-			
 	</script>
 </body>
 </html>

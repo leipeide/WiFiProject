@@ -11,6 +11,13 @@
 	src="${pageContext.request.contextPath }/layui/layui.js"></script>
 <title>Insert title here</title>
 <style>
+/* 
+ *重要： layui-layout-body的overflow属性layui框架自带的是hidden; 
+ *当页面内容超出页面时，内容被修剪，故自己设置overflow属性为auto  
+ */
+  .layui-layout-body{ 
+	 	overflow:auto; 
+  }
 .functionDiv{
 /* 	border:3px solid #00695F;     */
 	height:40px; 
@@ -21,60 +28,63 @@
 .selectPloyDiv{
 	float:left;
 	margin-left:20px;
-	width:100px;
+	width:110px;
 	height:50px;
 /* 	border:3px solid #00695F; */
 	}
 .tableDiv{
-/*     border:3px solid #00695F;      */
+/*   
+order:3px solid #00695F;      */
 }
-
 </style> 
 </head>
-<body>
-	<div class="layui-tab layui-tab-brief" lay-filter="TabBrief">
-		<ul class="layui-tab-title">
-			<!--<li class="layui-this" lay-id="ballastPloy">镇流器策略</li> -->
- 			<li lay-id="ledDriverPloy">led驱动器策略</li>
-			<!-- <li lay-id="wifiPloy">wifi无线调光器策略</li> -->
-		</ul>
-		<div class="layui-tab-content">
-			<!-- 1.Tab镇流器策略控制区域 -->
-			<div class="layui-tab-item" id=""></div>
-			
-			<!-- 2.Tabled驱动器策略控制区域 -->
-			<div class="layui-tab-item layui-show" id="ledPloy_table">
-				<form class="layui-form" method="" action="">
+<body class="layui-layout-body">
+	<form class="layui-form">
+		<!--  作为隐藏标签,用于储存语言类型,在项目中传递  -->
+		<input type="hidden" id="hiddenLan" value=${i18nLanguage }>
+		<div class="layui-tab layui-tab-brief" lay-filter="TabBrief">
+			<ul class="layui-tab-title">
+				<!--<li class="layui-this" lay-id="ballastPloy">镇流器策略</li> -->
+				<li class="i18n" name="LedPloy" lay-id="ledDriverPloy"></li>
+				<!-- <li lay-id="wifiPloy">wifi无线调光器策略</li> -->
+			</ul>
+			<div class="layui-tab-content">
+				<!-- 1.Tab镇流器策略控制区域 -->
+				<div class="layui-tab-item"></div>
+				<!-- 2.Tabled驱动器策略控制区域 -->
+				<div class="layui-tab-item layui-show" id="ledPloy_table">
 					<div class="functionDiv">
 						<div class="addPloyDiv">
-							<a href="javascript:;" class="layui-btn" onclick="newLedPloy('${pageContext.request.contextPath }/newPloyFromServlet',${userid})">添加策略</a>
+							<a href="javascript:;" class="layui-btn" name="AddPloy"
+								onclick="newLedPloy('${pageContext.request.contextPath }/newPloyFromServlet',${userid})"></a>
 						</div>
 						<div class="selectPloyDiv">
 							<select name="selectFilter" lay-filter="select">
-								<option value="allPloy">所有策略</option>
+								<option value="allPloy" class="i18n" name="AllPloy"></option>
 								<c:forEach items="${result.ledPloy}" var="ledPloy">
-									<option value=${ledPloy.id}>${ledPloy.ployName}</option>
+									<option value=${ledPloy.id }>${ledPloy.ployName}</option>
 								</c:forEach>
 							</select>
 						</div>
 					</div>
 					<div class="tableDiv">
 						<div id="allPloyTableDiv" style="display: block">
-							<table class="layui-table">
+							<!-- 为美观，表格风格设置为sm； lay-size="sm" -->
+							<table class="layui-table" lay-size="sm">
 								<colgroup>
-									<col width="120">
+									<col width="200">
+									<col width="200">
+									<col width="200">
+									<col width="200">
 									<col>
 								</colgroup>
 								<thead>
 									<tr>
-										<th>名称</th>
-										<th>绑定分组</th>
-										<th>执行状态</th>
-										<th>添加操作</th>
-										<th>编辑策略</th>
-<!-- 										<th>删除</th>
-										<th>执行设置</th>
-										 -->
+										<th class="i18n" name="PolicyName"></th>
+										<th class="i18n" name="BoundGroup"></th>
+										<th class="i18n" name="DoState"></th>
+										<th class="i18n" name="AddOperation"></th>
+										<th class="i18n" name="EditStrategy"></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -82,104 +92,103 @@
 										<tr>
 											<td><a href="javascript:;"
 												onclick="ployRename('${pageContext.request.contextPath }/ployRenameFromServlet',${userid},${ledPloy.id})">
-													<span><font color="#009688">${ledPloy.ployName}</font></span>
+													<font color="#009688">${ledPloy.ployName}</font>
 											</a></td>
 											<td><a href="javascript:;"
 												onclick="groupMessage('${pageContext.request.contextPath }/groupMessageServlet',${userid},${ledPloy.groupid})">
-													<span><font color="#009688">${ledPloy.groupid}</font></span>
+													<font color="#009688">${ledPloy.groupid}</font>
 											</a></td>
-											<td>${ledPloy.runState == 0 ? "未执行" : "执行中"}</td>
-											<td><a href="javascript:;"
-												class="layui-btn layui-btn-xs"
+											<td>${ledPloy.runState == 0 ? "Stoped" : "Running"}</td>
+											<td><a href="javascript:;" class="layui-btn layui-btn-xs"
 												onclick="addOperate('${pageContext.request.contextPath }/addPloyOperateFormServlet',${userid},${ledPloy.id},${ledPloy.runState})">
 													<i class="layui-icon">&#xe654;</i>
 											</a></td>
-											<td><a href="javascript:;" class="layui-btn layui-btn-xs"
-													onclick="runPloy('${pageContext.request.contextPath }/ployRunStateChangeServlet',${ledPloy.id},${userid })">执行</a>
-												<a href="javascript:;" class="layui-btn layui-btn-xs"
-													onclick="stopPloy('${pageContext.request.contextPath }/ployRunStateChangeServlet',${ledPloy.id},${userid })">停止</a>
-												<a href="javascript:;" class="layui-btn layui-btn-xs"
+											<td><div class="layui-btn-container">
+											    <a href="javascript:;" class="layui-btn layui-btn-xs"
 													onclick="ledPloyChangeGroup('${pageContext.request.contextPath }/ployChangeGroupFormServlet',${userid},${ledPloy.id},${ledPloy.groupid},${ledPloy.runState })">
-													<i class="layui-icon">&#xe642;</i></a>
+														<i class="layui-icon">&#xe642;</i>
+												</a>
 												<a href="javascript:;" class="layui-btn layui-btn-xs"
 													onclick="deletePloy('${pageContext.request.contextPath }/deletePloyServlet',${userid},${ledPloy.id},${ledPloy.runState})">
-													<i class="layui-icon">&#xe640;</i></a>
-											</td>
-<!-- 											<td><a href="javascript:;"
-												class="layui-btn layui-btn-xs"
-												onclick="deletePloy('${pageContext.request.contextPath }/deletePloyServlet',${userid},${ledPloy.id},${ledPloy.runState})">
-													<i class="layui-icon">&#xe640;</i>
-											</a></td>
-											<td><a href="javascript:;"
-												class="layui-btn layui-btn-xs"
-												onclick="runPloy('${pageContext.request.contextPath }/ployRunStateChangeServlet',${ledPloy.id},${userid })">执行</a>
+														<i class="layui-icon">&#xe640;</i>
+												</a>
 												<a href="javascript:;" class="layui-btn layui-btn-xs"
-												onclick="stopPloy('${pageContext.request.contextPath }/ployRunStateChangeServlet',${ledPloy.id},${userid })">停止</a>
+													onclick="runPloy('${pageContext.request.contextPath }/ployRunStateChangeServlet',${ledPloy.id},${userid })">
+														<span class="i18n" name="DoPloy"></span>
+												</a> 
+												<a href="javascript:;" class="layui-btn layui-btn-xs"
+													onclick="stopPloy('${pageContext.request.contextPath }/ployRunStateChangeServlet',${ledPloy.id},${userid })">
+														<span class="i18n" name="StopPloy"></span>
+												</a>
+												</div>
 											</td>
-											 -->
 										</tr>
 									</c:forEach>
 								</tbody>
 							</table>
 						</div>
-						<!-- 	单个策略内操作表格 -->
-						<div id="onePloyTableDiv" style="display:none">
-							<table class="layui-table">
+						<!-- 单个策略内操作表格 -->
+						<div id="onePloyTableDiv" style="display: none">
+							<!-- 为美观，表格风格可以设置为sm ；lay-size="sm"-->
+							<table class="layui-table" lay-size="sm">
 								<colgroup>
-									<col width="120">
+									<col width="180">
 									<col>
 								</colgroup>
 								<thead>
 									<tr>
-										<th>策略名称</th>
-										<th>操作类型</th>
-										<th>参数</th>
-										<th>执行时间范围</th>
-										<th>指令时间</th>
-										<th>删除</th>
+										<th class="i18n" name="PolicyName"></th>
+										<th class="i18n" name="OperationType"></th>
+										<th class="i18n" name="LParam"></th>
+										<th class="i18n" name="PloyDateRange"></th>
+										<th class="i18n" name="CmdTime"></th>
+										<th class="i18n" name="LDelete"></th>
 									</tr>
 								</thead>
 								<tbody id="tbody2">
-						<%-- 	<c:forEach items="${}" var=""> 
-									<tr>
-										<td>策略名称</td>
-										<td>1</td>
-										<td>0</td>
-										<td>2019/8/9-2019/9/9</td>
-										<td>12:00</td>
-										<td><a href="javascript:;" class="layui-btn layui-btn-xs"
-											onclick="deletePloyOperate('${pageContext.request.contextPath }/deletePloyOperateServlet',)">
-												<i class="layui-icon">&#xe640;</i>
-										</a></td>
-									</tr>
-								 </c:forEach> --%>
+									<%-- 	<c:forEach items="${}" var=""> 
+											<tr>
+												<td>策略名称</td>
+												<td>1</td>
+												<td>0</td>
+												<td>2019/8/9-2019/9/9</td>
+												<td>12:00</td>
+												<td><a href="javascript:;" class="layui-btn layui-btn-xs"
+													onclick="deletePloyOperate('${pageContext.request.contextPath }/deletePloyOperateServlet',)">
+														<i class="layui-icon">&#xe640;</i>
+												</a></td>
+											</tr>
+										 </c:forEach> --%>
 								</tbody>
 							</table>
 						</div>
 					</div>
-				</form>
+				</div>
+				<%--wifi无线调光器策略控制Tab选项区域 --%>
+				<div class="layui-tab-item"></div>
 			</div>
-			
-			<%--wifi无线调光器策略控制Tab选项区域 --%>
-			<div class="layui-tab-item"></div>
-			
 		</div>
-	</div>	
+	</form>
 	<script type="text/javascript"
-		src="${pageContext.request.contextPath }/admin/js/ployForm.js"></script>		
+		src="${pageContext.request.contextPath }/admin/js/jquery.min.js"></script>
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath }/admin/js/jquery.i18n.properties.js"></script>
 	<script type="text/javascript">
-	    var ployid = "";
+		//1.全局变量
+	    var ployid = ""; //用于储存策略id,传递到单个策略信息的页面中
+	    var i18nLanguage = jQuery("#hiddenLan").val();//获取id为hiddenLan的value值，是当前系统的语言环境
+	    
+	    //2.加载layui模块
 		layui.use(['element','form'], function(){
 			  var element = layui.element;
 			  var form = layui.form;
-			  //1.监听Tab选项卡
+			  //2.1.监听Tab选项卡
 			  var layid = location.hash.replace(/^#TabBrief=/, ''); //.获取hash来切换选项卡，假设当前地址的hash为lay-id对应的值
 			  element.tabChange('TabBrief', layid); //.切换到lay-id对应的tab选项
 			  element.on('tab(TabBrief)', function(){  //.监听Tab切换，以改变地址hash值
 			    location.hash = 'TabBrief='+ this.getAttribute('lay-id');
 			  });
-			
-			  //2.监听select;触发了select选择查看策略
+			  //2.2.监听select;触发了select选择查看策略
 			  form.on('select(select)',function(data){
 				  if(data.value == "allPloy"){ //返回所有策略的页面
 					  document.getElementById("onePloyTableDiv").style.display = "none";
@@ -191,89 +200,449 @@
 					  ployid = data.value;
 					  IntoPloyOperateTable(ployid);
 					  //每隔一分钟刷新单个策略操作表格;定时刷新问题需要解决
+					  //暂定策略页面不刷新，该页面不涉及到节点的信息；
 					  //setInterval(WelcomeAJAXRequest,1000*3);
-					 
 				  }
 			  });
 			  
 			});
 		
-		//ajax获取单个策略里的操作集合，并将数据动态插入到第2个table中
+	    //3.重要：这里需要进行i18n的翻译；进入相应语言环境的语言库，翻译页面
+	    jQuery.i18n.properties({
+	      	 name : 'common', //资源文件名称,本页面只用到common.properties
+	      	 path : 'admin/i18n/', //资源文件路径
+	      	 mode : 'both', //用Map的方式使用资源文件中的值
+	           language : i18nLanguage,
+	           callback : function() {//加载成功后设置显示内容
+	                 // 第一类：class未使用layui的框架；自己命名的i18n
+	                 var insertEle = jQuery(".i18n"); // 获得所有id为i18n的元素
+	                 insertEle.each(function() {  // 遍历insertEle，根据i18n元素的 name 获取语言库对应的内容写入
+	                	 jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
+	                  });
+	                 //第四类：layui的button
+		             var insertBtnEle = jQuery(".layui-btn"); // 获得所有class为layui-btn的元素
+		             insertBtnEle.each(function() {  // 遍历，根据layui-btn元素的 name 获取语言库对应的内容写入
+		            	 jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
+		              });
+	       	  }
+	      }); 
+	    
+		//4.ajax获取单个策略里的操作集合，并将数据动态插入到第2个table中
 		function IntoPloyOperateTable(ployid){
-			layui.use('layer', function(){
-				 var $ = layui.$ //由于layer弹层依赖jQuery，所以可以直接得到
-			    ,layer = layui.layer;
-					 $.ajax({
-						  type:"post",
-				          url:"${pageContext.request.contextPath}/getPloyOperateServlet",
-				          data:{
-				        	//参数
-				        	ployid:ployid
-				          },
-				          async : true,
-				          datatype: "Json",
-				          success:function(datasource, textStatus, jqXHR) {
-				        	  var json = datasource; 
-				        	  var operate = "";
-				        	  inner = "";
-				        	  for(var index=0; index < json.length; index++){
-				        		  operate = json[index];
-				        		  var startDate = new Date(operate.startDate);//毫秒数转换成时间
-				        		  var endDate = new Date(operate.endDate);//毫秒数转换成时间
-				        		  var year1 = startDate.getFullYear();
-				        		  var year2 = endDate.getFullYear();
-				        		  var month1 = startDate.getMonth() + 1;
-				        		  var month2 = endDate.getMonth() + 1;
-				        		  var date1 = startDate.getDate();
-				        		  var date2 = endDate.getDate();
-				        		  inner = inner + "<tr><td>" + operate.ployName + "</td>\
-										<td>";
-										if (operate.operateType == 1) {
-											inner = inner + "开关灯";
-										} else if(operate.operateType == 2){
-											inner = inner + "调光";
-										} else if(operate.operateType == 3){
-											inner = inner + "调色";
-										}
-										inner = inner + "</td>\
-										<td>";
-										if (operate.operateParam == 0) {
-											inner = inner + "OFF";
-										} else if(operate.operateType == 1){
-											inner = inner + "ON";
-										} else{
-											inner = inner + operate.operateParam + "%";
-										}
-										inner = inner + "</td>\
- 										<td>" +  year1 + "/" + month1 + "/" + date1 + "-" + year2 + "/" + month2 + "/" + date2 + "</td>\
- 										<td>";
-										if (operate.hours == 0 && operate.minutes != 0) {
-											inner = inner + "00" + ":" + operate.minutes;
-										}else if(operate.hours != 0 && operate.minutes == 0) {
-											inner = inner + operate.hours + ":" + "00";
-										}else if(operate.hours == 0 && operate.minutes == 0){
-											inner = inner + "00:00";
-										}else{
-											inner = inner + operate.hours + ":" + operate.minutes;
-										}
-										inner = inner + "</td>\
-										<td><a href='javascript:;' class='layui-btn layui-btn-xs' onclick=\"deletePloyOperate('${pageContext.request.contextPath }/deletePloyOperateServlet', " + operate.ployid + "," + operate.id 
-			+ " )\"><i class='layui-icon'>&#xe640;</i></a></td>\
-									</tr>";
-				        		 
-				        	  }
-				        	 document.getElementById("tbody2").innerHTML = inner;
-				        	
-				        	 
-				          },
-				          error: function() {  
-				          	 // layer.msg("提交失败!");	
-				          	}
-				  		});		  
-		  		});		  
+			 jQuery.ajax({
+				  type:"post",
+		          url:"${pageContext.request.contextPath}/getPloyOperateServlet",
+		          data:{
+		        	//参数
+		        	ployid:ployid
+		          },
+		          async : true,
+		          datatype: "Json",
+		          success:function(datasource, textStatus, jqXHR) {
+		        	  var json = datasource; 
+		        	  var operate = "";
+		        	  inner = "";
+		        	  for(var index=0; index < json.length; index++){
+		        		  operate = json[index];
+		        		  var startDate = new Date(operate.startDate);//毫秒数转换成时间
+		        		  var endDate = new Date(operate.endDate);//毫秒数转换成时间
+		        		  var year1 = startDate.getFullYear();
+		        		  var year2 = endDate.getFullYear();
+		        		  var month1 = startDate.getMonth() + 1;
+		        		  var month2 = endDate.getMonth() + 1;
+		        		  var date1 = startDate.getDate();
+		        		  var date2 = endDate.getDate();
+		        		  inner = inner + "<tr><td>" + operate.ployName + "</td>\
+								<td>";
+								if (operate.operateType == 1) {
+									//inner = inner + "开关灯";
+									inner = inner + jQuery.i18n.prop('SwitchLamp');
+								} else if(operate.operateType == 2){
+									//inner = inner + "调光";
+									inner = inner + jQuery.i18n.prop('aDim');
+								} else if(operate.operateType == 3){
+									//inner = inner + "调色";
+									inner = inner + jQuery.i18n.prop('aToning');
+								}
+								inner = inner + "</td>\
+								<td>";
+								if (operate.operateParam == 0 && operate.operateType == 1) {
+									inner = inner + "OFF";
+								} else if(operate.operateType == 1){
+									inner = inner + "ON";
+								} else{
+									inner = inner + operate.operateParam + "%";
+								}
+								inner = inner + "</td>\
+								<td>" +  year1 + "/" + month1 + "/" + date1 + "-" + year2 + "/" + month2 + "/" + date2 + "</td>\
+								<td>";
+								if (operate.hours == 0 && operate.minutes != 0) {
+									inner = inner + "00" + ":" + operate.minutes;
+								}else if(operate.hours != 0 && operate.minutes == 0) {
+									inner = inner + operate.hours + ":" + "00";
+								}else if(operate.hours == 0 && operate.minutes == 0){
+									inner = inner + "00:00";
+								}else{
+									inner = inner + operate.hours + ":" + operate.minutes;
+								}
+								inner = inner + "</td>\
+								<td><a href='javascript:;' class='layui-btn layui-btn-xs' onclick=\"deletePloyOperate('${pageContext.request.contextPath }/deletePloyOperateServlet', " + operate.ployid + "," + operate.id 
+	+ " )\"><i class='layui-icon'>&#xe640;</i></a></td>\
+							</tr>";
+		        		 
+		        	  }
+		        	 document.getElementById("tbody2").innerHTML = inner;
+		        	 
+		          },
+		          error: function() {  //提交失败
+		        	  layer.msg(jQuery.i18n.prop('submitFailed'));
+		          	}
+		  	  
+ 			});		  
 		}
 		
+		/**
+		 * 5.删除策略内的定时指令
+		 * @param url
+		 * @param userid
+		 * @param ployid
+		 * @returns
+		 */
+		function deletePloyOperate(url,ployid,ployOperateId){
+			 layer.confirm(jQuery.i18n.prop('DelTimingOperate'),{ 
+			  		title: jQuery.i18n.prop('Tips'),
+			  		btn: [jQuery.i18n.prop('confirmBtn'),jQuery.i18n.prop('Lcancel')], //确定、取消按钮
+		        	btn1: function(){
+		        		jQuery.ajax({
+		      			  type:"post",
+		      			  url:url,
+		      			  data:{
+		      				  operateId:ployOperateId
+		      			  },
+		      			  async : true,
+		      			  datatype: "String",
+		      			  success:function(datasource, textStatus, jqXHR) {
+		      				  //返回删除提示
+		      				  if(datasource == "删除成功"){
+			      					layer.msg(jQuery.i18n.prop('DelSuccess'),function(){
+				      					//删除操作后重新获取策略内定时操作信息，重新操作显示数据到表格上
+			      						IntoPloyOperateTable(ployid);
+				      				  });
+		      				  }else if(datasource == "删除失败"){
+			      					layer.msg(jQuery.i18n.prop('DelFailed'),function(){
+				      					//删除操作后重新获取策略内定时操作信息，重新操作显示数据到表格上
+			      						IntoPloyOperateTable(ployid);
+				      				  });
+		      				  }else if(datasource == "参数不完整"){
+			      					layer.msg(jQuery.i18n.prop('IncompletePara'),function(){
+				      					//删除操作后重新获取策略内定时操作信息，重新操作显示数据到表格上
+			      						IntoPloyOperateTable(ployid);
+				      				  });
+		      				  }else{
+		      					  
+		      					  
+		      				  }
+		      			  },
+		      			  error: function() {  
+		      				  layer.msg(jQuery.i18n.prop('submitFailed'));
+		      				  //layer.msg("提交失败!");	
+		      	      		}
+		        		});	
+		        	
+		        	}
+			  	  ,btn2: function(){
+			  		   //取消按钮取消删除操作
+	         		 }
+			});	
+		}
+		
+		/**
+		 * 6.新建led策略弹窗
+		 * led、镇流器、wifi弹窗函数不一样，公用一个jsp、servlet
+		 * @param url
+		 * @param userid
+		 * @returns
+		 */
+		function newLedPloy(url,userid){
+			var groupType = 2;
+			layer.open({
+				area : [ '400px', '350px' ],
+				btnAlign : 'c',
+				resize : false,
+				content : url + "?userid=" + userid + "&groupType=" + groupType + "&i18nLanguage=" + i18nLanguage,
+				closeBtn : 1,
+				type : 2,
+				title: jQuery.i18n.prop('CreateAPloy'),
+				cancel : function() {
+					// 右上角关闭回调
+					location.reload();
+				}
+			});
+		}
+
+		/**
+		 * 7.策略重命名
+		 * @param url
+		 * @param userid
+		 * @param ployid
+		 * @returns
+		 */
+		function ployRename(url,userid,ployid){
+			layer.open({
+				area : [ '300px', '200px' ],
+				btnAlign : 'c',
+				resize : false,
+				content : url + "?userid=" + userid + "&ployid=" + ployid + "&i18nLanguage=" + i18nLanguage, 
+				closeBtn : 1,
+				type : 2,
+				title: jQuery.i18n.prop('EnterNewName'),
+				cancel : function() {
+					// 右上角关闭回调
+					location.reload();
+				}
+			});
+		}
+		/**
+		 * 8.添加策略操作弹窗
+		 * @param url
+		 * @param userid
+		 * @param ployid
+		 * @returns
+		 */
+		function addOperate(url,userid,ployid,runState){
+			if(runState == 1){
+				//策略正在执行，无法操作!策略执行过程中添加策略操作，避免websocket执行定时操作时出错
+				layer.alert(jQuery.i18n.prop('PloyRunningCanNotOperate'),{
+					title:jQuery.i18n.prop('Tips'),
+					btn:[jQuery.i18n.prop('confirmBtn')],
+				});
+			}else if(runState == 0){
+				layer.open({
+					area : [ '500px', '350px' ],
+					btnAlign : 'c',
+					resize : false,
+					content : url + "?userid=" + userid + "&ployid=" + ployid + "&i18nLanguage=" + i18nLanguage,
+					closeBtn : 1,
+					type : 2,
+					title:jQuery.i18n.prop('AddTimingInstruction'),
+					cancel : function() {
+						// 右上角关闭回调
+					}
+				});
+			}
+		}
+		/**
+		 * 9.查看策略绑定分组的信息
+		 * @param url
+		 * @param userid
+		 * @param groupid
+		 * @returns
+		 */
+	function groupMessage(url,userid,groupid){
+		 //1.ajax获取group对象
+		 jQuery.ajax({
+				  type:"post",
+		          url:url,
+		          data:{
+		        	userid:userid,
+		            groupid:groupid
+		          },
+		          async : true,
+		          datatype: "json",
+		          success:function(datasource, textStatus, jqXHR) {
+		        	  //2.弹窗显示group信息
+		              var group = datasource;
+		        	  if(group != null){
+		        		  var message = "<div style='margin-top:10px;margin-left:25px;padding-buttom:10px'>"+jQuery.i18n.prop('UserIdM') + group.userid + "</br>"+ jQuery.i18n.prop('GroupID') + group.groupid + "</br>"+ jQuery.i18n.prop('GroupNameM') + group.groupName + "</br>" + jQuery.i18n.prop('NodeNumM') + group.nodeNum  + "</br></div>";
+		        		  layer.open({
+		        				 area : [ '380px', '220px' ],
+		        				 btnAlign : 'l',
+		        				 resize : false,
+		        				 closeBtn : 1,
+		        				 type : 1,
+		        				 content : message,
+		        				 title: jQuery.i18n.prop('BindGroupMessage'),
+		        				 cancel : function(){
+		        				 }
+		        			 });
+		        		  
+		        	  }else{//未查询到信息	
+		        		  layer.msg(jQuery.i18n.prop('NoGroupMessage'));	
+		        	  }
+		        	  
+		          },
+		          error: function() {  //查询出错了
+		          	  layer.msg(jQuery.i18n.prop('QueryError'));	
+		          	}
+				});
+		}
+		/**
+		 *10.删除策略
+		 * @param url
+		 * @param userid
+		 * @param ployid
+		 * @returns
+		 */
+		function deletePloy(url,userid,ployid,runState){
+			 if(runState == 1){
+				 //策略正在执行，无法进行删除;策略执行过程中删除策略，避免websocket执行定时操作时出错
+				 layer.alert(jQuery.i18n.prop('PloyRunningCanNotDelete'),{
+					 title:jQuery.i18n.prop('Tips'),
+					 btn: [jQuery.i18n.prop('confirmBtn')]
+				 }, function(index){
+					  //do something
+					  layer.close(index);
+					});   
+			 }else{
+				 //ajax发送删除指令
+				 jQuery.ajax({
+					  type:"post",
+			          url:url,
+			          data:{
+			        	userid:userid,
+			            ployid:ployid
+			          },
+			          async : true,
+			          datatype: "String",
+			          success:function(datasource, textStatus, jqXHR) {
+			        	  //返回删除提示
+			        	  if(datasource == '删除成功'){
+			        		  layer.msg(jQuery.i18n.prop('DelSuccess'),function(){
+				        		  location.reload();
+				        	  });
+			        	  }else if(datasource == '删除失败'){
+			        		  layer.msg(jQuery.i18n.prop('DelFailed'),function(){
+				        		  location.reload();
+				        	  });
+			        	  }
+			        	
+			          },
+			          error: function() {  //提交失败
+			        	  layer.msg(jQuery.i18n.prop('submitFailed'));
+			          	
+			          	}
+			  		});	
+			 }
+		}
+		/**
+		 * 11.led更改策略的绑定分组；
+		 * @param url
+		 * @param ployid
+		 * @param groupid
+		 * @returns
+		 */
+		function ledPloyChangeGroup(url,userid,ployid,groupid,runState){
+			var groupType = 2;
+			if(runState == 1){
+				 //策略正在执行，无法操作
+				 layer.msg(jQuery.i18n.prop('PloyRunningCanNotOperate'));	
+			}else{
+				layer.open({
+					area : [ '400px', '350px' ],
+					btnAlign : 'c',
+					resize : false,
+					title: [jQuery.i18n.prop('PloyChangeGroup')], //策略更换绑定的分组
+					content : url + "?userid=" + userid + "&ployid=" + ployid + "&groupid=" + groupid +"&groupType=" + groupType + "&i18nLanguage=" + i18nLanguage,
+					closeBtn : 1,
+					type : 2,
+					cancel : function() {
+						// 右上角关闭回调
+						 location.reload();
+					}
+				});
+			}
+		}
+		/**
+		 * 12.执行策略
+		 * @param url
+		 * @param ployid
+		 * @param userid
+		 * @returns
+		 */
+		function runPloy(url,ployid,userid){
+			//采用ajax
+			var runState = 1; //状态为1，正在执行
+			jQuery.ajax({
+				  type:"post",
+				  url:url,
+				  data:{
+					  userid:userid,
+					  ployid:ployid,
+					  runState:runState
+				  },
+				  async : true,
+				  datatype: "String",
+				  success:function(datasource, textStatus, jqXHR) {
+					  //返回提示
+					  if(datasource == "策略已执行"){ //策略正在执行
+						  layer.msg(jQuery.i18n.prop('PloyImplemented'),function(){
+							   location.reload();
+						  });
+					  }else if(datasource == "停止执行"){//策略已停止执行
+						  layer.msg(jQuery.i18n.prop('StopImplement'),function(){
+							   location.reload();
+						  });
+					  }else if(datasource == "指令发送失败"){//
+						  layer.msg(jQuery.i18n.prop('cmdSendFail'),function(){
+							   location.reload();
+						  });
+					  }else{
+						  layer.msg(jQuery.i18n.prop('IncompletePara'),function(){
+							   location.reload();
+						  });
+					  }	
+				  },
+				  error: function() {  //提交失败
+					  layer.msg(jQuery.i18n.prop('submitFailed'));	
+		        	}
+				});	
+		}
+
+		/**
+		 * 13.停止执行策略
+		 * @param url
+		 * @param ployid
+		 * @param userid
+		 * @returns
+		 */
+		function stopPloy(url,ployid,userid){
+			//采用ajax
+			var runState = 0; //状态为0，未执行
+			jQuery.ajax({
+				  type:"post",
+				  url:url,
+				  data:{
+					  userid:userid,
+					  ployid:ployid,
+					  runState:runState
+				  },
+				  async : true,
+				  datatype: "String",
+				  success:function(datasource, textStatus, jqXHR) {
+					  //返回提示
+					  if(datasource == "策略已执行"){ //策略正在执行
+						  layer.msg(jQuery.i18n.prop('PloyImplemented'),function(){
+							   location.reload();
+						  });
+					  }else if(datasource == "停止执行"){//策略已停止执行
+						  layer.msg(jQuery.i18n.prop('StopImplement'),function(){
+							   location.reload();
+						  });
+					  }else if(datasource == "指令发送失败"){//
+						  layer.msg(jQuery.i18n.prop('cmdSendFail'),function(){
+							   location.reload();
+						  });
+					  }else{ //参数不完整
+						  layer.msg(jQuery.i18n.prop('IncompletePara'),function(){
+							   location.reload();
+						  });
+					  }
+				  },
+				  error: function() {  //提交失败
+					  layer.msg(jQuery.i18n.prop('submitFailed'));	
+		      	}
+			});	
+		}
 	</script>
-	
 </body>
 </html>

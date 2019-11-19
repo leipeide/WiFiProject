@@ -19,7 +19,7 @@ public  class GroupDaoImpl implements GroupDao{
 	public int insertGroup(Group group) throws Exception {
 		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
 	///*	
-		return qr.update("INSERT INTO `wifi_project`.`group_table` (`groupName`, `userid`, `switchStatus`, `type`, `lastOperateType`, `param2`,`nodeNum`) VALUES (?,?,?,?,?,?,?)",
+		return qr.update("INSERT INTO group_table (`groupName`, `userid`, `switchStatus`, `type`, `lastOperateType`, `param2`,`nodeNum`) VALUES (?,?,?,?,?,?,?)",
 				group.getGroupName(),group.getUserid(),group.getSwitchStatus(),group.getType(),
 				group.getLastOperateType(),group.getParam2(),group.getNodeNum());
 	//*/	

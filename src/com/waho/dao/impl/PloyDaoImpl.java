@@ -31,7 +31,7 @@ public class PloyDaoImpl implements PloyDao {
 		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
 	///*	
 	 	return qr.update(
-				"INSERT INTO `wifi_project`.`ploy` (`userid`, `ployName`, `runState`, `groupid`, `groupType`, `param1`, `param2`, `param3`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+				"INSERT INTO ploy (`userid`, `ployName`, `runState`, `groupid`, `groupType`, `param1`, `param2`, `param3`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 				ploy.getUserid(),ploy.getPloyName(),ploy.getRunState(),ploy.getGroupid(),ploy.getGroupType(),ploy.getParam1(),ploy.getParam2(),ploy.getParam3()
 				);
 	//	*/		

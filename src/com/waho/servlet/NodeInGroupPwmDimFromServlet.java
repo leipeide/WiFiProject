@@ -30,8 +30,11 @@ public class NodeInGroupPwmDimFromServlet extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		// 1.获取表单数据
 		String nodeid = request.getParameter("nodeid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
+		//System.out.println("i18nLanguageSt:"+i18nLanguageStr);
 		// 2.分发转向
 		request.setAttribute("nodeid", nodeid);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/NodeInGroupDimForm.jsp").forward(request, response);
 		}
 

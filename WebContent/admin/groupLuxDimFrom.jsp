@@ -9,44 +9,125 @@
 	href="${pageContext.request.contextPath }/layui/css/layui.css">
 <script type="text/javascript"
 	src="${pageContext.request.contextPath }/layui/layui.js"></script>
-<title>Insert title here</title>
 </head>
 <body>
-	<form class="layui-form"
-		action="${pageContext.request.contextPath }/groupLuxDimServlet" method="post">
-		<input type="hidden" name="groupid" value="${groupid }">
-		<input type="hidden" name="userid" value="${userid }">
-		<!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
-		<div class="layui-form-item">
-			<label class="layui-form-label" style="width: 100px;">打开自动调光</label>
+	<form class="layui-form">
+		<!-- 隐藏标签，传递参数 -->
+		<input type="hidden" id="hiddenLan" value="${i18nLanguage }">
+		<div class="layui-form-item" style="margin-top:10px;">
+			<label class="i18n" style="width:140px;margin-left:25px;" name="OpenAutoLuxDim"></label>
 			<div class="layui-input-block">
-				<input type="checkbox" name="switchState" lay-skin="switch">
+				<input type="checkbox" id="checkBox" lay-skin="switch">
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label" style="width: 180px;">输入调光参数（1-60000）</label>
+			<label class="i18n" style="width:180px;margin-left:25px;" name="EnterDimPara"></label>
 			<div style="width: 180px;margin-left:80px">
-				<input id="text1" type="text" name="luxParam" required lay-verify="required"
-					autocomplete="off" class="layui-input" onchange="percentCheck(this)">
+				<input id="text1" type="text" name="luxParam"  placeholder="1-60000" required lay-verify="required"
+					autocomplete="off" class="layui-input" onchange="percentCheck(this)"
+					style="width:180px;margin-top:10px"
+					>
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<div class="layui-input-block">
-				<button class="layui-btn">提交</button>
+			<div class="layui-input-block" style="margin-left:80px;">
+				<a class="layui-btn layui-btn-sm"
+					onclick="submitBtn('${pageContext.request.contextPath }/groupLuxDimServlet',${userid },${groupid })">
+					<font class="i18n" name="Lsubmit"></font>
+				</a>
 			</div>
 		</div>
-
 	</form>
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath }/admin/js/jquery.min.js"></script>       
+ 	<script type="text/javascript"
+ 		src="${pageContext.request.contextPath }/admin/js/jquery.i18n.properties.js"></script>
 	<script>
+	    //1.加载layui模块
 		layui.use('form', function() {
 			var form = layui.form;
 			
 		});
+	    
+		//2.获取id为hiddenLan的value值，i18nLanguage为全局变量，是当前系统的语言环境
+		var i18nLanguage = jQuery("#hiddenLan").val(); 
 		
+		//3.重要：这里需要进行i18n的翻译；进入相应语言环境的语言库，翻译页面
+		jQuery.i18n.properties({
+		  	 name : 'common', //资源文件名称,本页面只用到common.properties
+		  	 path : 'admin/i18n/', //资源文件路径
+		  	 mode : 'both', //用Map的方式使用资源文件中的值
+		     language : i18nLanguage,
+		     callback : function() {//加载成功后设置显示内容
+			    	 // 第一类：layui的layui-form-label
+			         var insertEle = jQuery(".i18n"); // 获得所有class为layui-form-label的元素
+		             insertEle.each(function() {  // 遍历，根据layui-form-label元素的 name 获取语言库对应的内容写入
+		            	jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
+		             });
+		     	}
+		  });
+		
+		//4.控制调光范围在1-60000
 		function percentCheck(obj){
 			var val = document.getElementById("text1").value;
 			if(val<0){
-				obj.value = 0;
+				obj.value = 1;
+			}if(val>60000){
+				obj.value = 60000;
+			}
+		}
+		
+		//5.提交函数
+		function submitBtn(url,userid,groupid){
+		 	// checkBox选择调光类型；luxParam为false,则为调光功能；为true,则为自动调光
+			var switchState = document.getElementById("checkBox").checked;
+			var luxParam = jQuery("#text1").val();
+			if(luxParam != ""){
+				jQuery.ajax({
+					  type:"post",
+			          url:url,
+			          data:{
+			        	//参数
+			        	userid:userid,
+			        	groupid:groupid,
+			        	luxParam:luxParam,
+			        	switchState:switchState
+			          },
+			          async : true,
+			          datatype: "String",
+			          success:function(datasource, textStatus, jqXHR) {
+			        	  if(datasource > 0){
+			        		 layer.msg(datasource + " " + jQuery.i18n.prop('NCmdSuccess'),function(){
+		 		        		  location.reload();
+		 		        	  });	
+			        	  }else if(datasource == "设备离线或分组内无节点"){
+			        		 layer.msg(jQuery.i18n.prop('TipDevOfflineOrNoNodes'),function(){
+		 		        		  location.reload();
+		 		        	  });	
+			        	  }else if(datasource == "提交失败"){
+			        		  layer.msg(jQuery.i18n.prop('submitFailed'),function(){
+		 		        		  location.reload();
+		 		        	  });	
+			        	  }else{
+			        		  
+			        	  }
+			        	  
+			          },
+			          error: function() {  
+			          	  layer.msg(jQuery.i18n.prop('cmdSendFail'));	
+			          	}
+			  		});
+			}else{
+				layer.msg(jQuery.i18n.prop('DimParaNULL'));	
+			}
+					
+		}
+	    
+		//4.核对调光参数范围
+		function percentCheck(obj){
+			var val = document.getElementById("text1").value;
+			if(val<1){
+				obj.value = 1;
 			}if(val>60000){
 				obj.value = 60000;
 			}

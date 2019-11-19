@@ -31,9 +31,11 @@ public class AddPloyOperateFormServlet extends HttpServlet {
 		//1.获取表单数据
 		String userid = request.getParameter("userid");
 		String ployid = request.getParameter("ployid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		//2.分发转向
 		request.setAttribute("userid", userid);
 		request.setAttribute("ployid", ployid);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/addPloyOperate.jsp").forward(request, response);
 	}
 

@@ -38,12 +38,15 @@ public class WelcomeServlet extends HttpServlet {
 		response.setContentType("text/html; charset=UTF-8");
 		//1.获取表单数据
 		String useridS = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
+	
 		int userid = Integer.parseInt(useridS);
 		//2.调用业务逻辑
 		UserService userService = new UserServiceImpl();
 		Map<String,Object> result = userService.getNodesByTypeAndUserid(userid);
 		//3.分发转向
 		request.setAttribute("userid", userid);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.setAttribute("result", result);
 		request.getRequestDispatcher("/admin/welcome.jsp").forward(request, response);
 			

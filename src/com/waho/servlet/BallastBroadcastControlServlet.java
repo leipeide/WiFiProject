@@ -42,9 +42,12 @@ public class BallastBroadcastControlServlet extends HttpServlet {
 		Boolean result = nodeService.writeBallastBroadcastCmd(Integer.parseInt(userid),Integer.parseInt(paramValue),functionStr);
 		//3.分发转向
 		if(result) {
-			response.getWriter().write(JSON.toJSONString("指令发送成功!"));
+			/**
+			 * 注意：此处的中文不要轻易的去改，涉及到前端判断字符串去查询相应的语言库，若修改，需要前后端统一
+			 */
+			response.getWriter().write(JSON.toJSONString("指令发送成功"));
 		}else {
-			response.getWriter().write(JSON.toJSONString("节点离线或不存在节点!"));
+			response.getWriter().write(JSON.toJSONString("节点离线或节点不存在"));
 		}
 	}
 

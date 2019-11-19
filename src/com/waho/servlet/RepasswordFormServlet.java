@@ -30,8 +30,11 @@ public class RepasswordFormServlet extends HttpServlet {
 		response.setContentType("text/html;charset = UTF-8");
 		//获取表单数据
 		String userid = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
+		
 		//分发转向
 	    request.setAttribute("userid", userid);
+	    request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/rePassword.jsp").forward(request, response);
 	}
 

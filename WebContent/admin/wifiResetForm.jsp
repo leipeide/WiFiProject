@@ -9,26 +9,22 @@
 	href="${pageContext.request.contextPath }/layui/css/layui.css">
 <script type="text/javascript"
 	src="${pageContext.request.contextPath }/layui/layui.js"></script>
-<title>Insert title here</title>
+<title></title>
 </head>
-<body "style=padding:100px">
-	<form class="layui-form"
-		action="${pageContext.request.contextPath }/wifiResetServlet"
-		method="post">
-		<input type="hidden" name="userid" value="${userid }">
-		<!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+<body>
+	<form class="layui-form">
+		<!-- 作为隐藏标签,用于储存语言类型,在项目中传递 -->
+	    <input type="hidden" id="hiddenLan" name="i18nLanguage" value=${i18nLanguage }>
 		<div class="layui-form-item">
-			<label class="layui-form-label">WiFi名称</label>
+			<label class="layui-form-label" name="LwifiName"></label>
 			<div class="layui-input-block" style="width: 160px;">
-				<input type="text" name="ssid" required lay-verify="required"
-					value="" autocomplete="off" class="layui-input">
+				<input type="text" id="ssidInput" required lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label">WiFi密码</label>
+			<label class="layui-form-label" name="LwifiPassword"></label>
 			<div class="layui-input-block" style="width: 160px;">
-				<input type="text" name="password" required lay-verify="required"
-					value="" autocomplete="off" class="layui-input">
+				<input type="text" id="passwordInput" required lay-verify="required" autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<table class="layui-table">
@@ -37,31 +33,142 @@
 			</colgroup>
 			<thead>
 				<tr>
-					<th>节点列表</th>
+					<th class="i18n" name="LNodeList"></th> 
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td><input type="checkbox" id="allCheckbox" lay-filter="allChoose" lay-skin="primary">
-					    <span id="chooseOrCancel">全选</span></td>
+					    <span class="i18n" name="LallCheck" id="chooseOrCancel"></span></td>
 				</tr>
 				<c:forEach items="${nodeList }" var="node">
 					<tr>
-						<td><input type="checkbox" name="id${node.id }" class="check"
-							lay-skin="primary" title="${node.nodeName }"></td>
+						<td><input type="checkbox" name="checkBoxInput" value=${node.id } class="check" lay-skin="primary" title="${node.nodeName }"></td>
 					</tr>
 				</c:forEach>
 			</tbody>
 		</table>
 		<div class="layui-form-item" >
-			<div class="layui-input-block">
-				<button class="layui-btn " lay-submit lay-filter="*">立即提交</button>
+			<div class="layui-input-block" style="margin-left:145px;">
+				<a class="layui-btn layui-btn-sm" lay-submit lay-filter="*"
+					onclick="submitBtn('${pageContext.request.contextPath }/wifiResetServlet',${userid })">
+						<font class="i18n" name="Lsubmit"></font>
+				</a>
 			</div>
 		</div>
-		<!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
 	</form>
-	<script type="text/javascript" 
-				src="${pageContext.request.contextPath}/admin/js/wifiReset.js">
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath }/admin/js/jquery.min.js"></script>       
+ 	<script type="text/javascript"
+ 		src="${pageContext.request.contextPath }/admin/js/jquery.i18n.properties.js"></script>
+	<script>
+		//1. 获取id为hiddenLan的value值，i18nLanguage为全局变量，是当前系统的语言环境
+		var i18nLanguage = jQuery("#hiddenLan").val(); 
+		
+		//2. 监听form表单
+		layui.use('form', function(){
+			var form = layui.form;
+			form.on('checkbox(allChoose)', function(data) {
+					ckAll();
+					//有些表单元素动态插入,这时 form 模块 的自动化渲染是会对其失效的,需要更新渲染，很重要
+					form.render();
+			});
+		});
+		
+		//3.重要：这里需要进行i18n的翻译；进入相应语言环境的语言库，翻译页面
+		jQuery.i18n.properties({
+		  	 name : 'common', //资源文件名称,本页面只用到common.properties
+		  	 path : 'admin/i18n/', //资源文件路径
+		  	 mode : 'both', //用Map的方式使用资源文件中的值
+		     language : i18nLanguage,
+		     callback : function() {//加载成功后设置显示内容
+		    	
+		             // 第一类：class未使用layui的框架；自己命名的i18n
+		             var insertEle = jQuery(".i18n"); // 获得所有id为i18n的元素
+		             insertEle.each(function() {  // 遍历insertEle，根据i18n元素的 name 获取语言库对应的内容写入
+		            	 jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
+		              });
+		             // 第二类：layui的label
+		             var insertLabelEle = jQuery(".layui-form-label"); // 获得所有id为i18n的元素
+		             insertLabelEle.each(function() {  // 遍历，根据i18n元素的 name 获取语言库对应的内容写入
+		           	     jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
+		              });
+		     	}
+		  });
+
+	    //4.全选与取消
+		function ckAll(){
+			var checked = document.getElementById("allCheckbox").checked;
+			var oneCheck = document.getElementsByClassName("check");
+			var chooseSpan = document.getElementById("chooseOrCancel");
+			if(checked){ //取消全选操作
+				for(var i=0; i< oneCheck.length; i++){
+					oneCheck[i].checked=true;
+				}
+				chooseSpan.innerHTML=jQuery.i18n.prop("Lcancel");//Lcancel取消全选
+			}else{//全选操作
+				for(var i=0; i< oneCheck.length; i++){
+					oneCheck[i].checked=false;
+				}
+				chooseSpan.innerHTML=jQuery.i18n.prop("LallCheck");//LallCheck全选
+			}
+		}
+	    
+	//5.提交函数
+	function submitBtn(url,userid){
+		var ssidVal = jQuery("#ssidInput").val(); 
+		var passwordVal = jQuery("#passwordInput").val();
+		var chenBoxObj = document.getElementsByName('checkBoxInput');
+		var nodeIdArr = new Array();
+		//获取选择checkbox的值（节点id）
+		for(var i=0; i < chenBoxObj.length; i++){
+			if(chenBoxObj[i].checked){
+				nodeIdArr.push(chenBoxObj[i].value);
+			}
+		}
+		//ajax请求删除
+		if(ssidVal == "" ||  passwordVal == ""){//输入框未填
+			 layer.msg(jQuery.i18n.prop('InputIsNull'));
+			
+		}else if(nodeIdArr.length == 0){//未选择对象
+			 layer.msg(jQuery.i18n.prop('noChooseObj'));
+		
+		}else{
+			jQuery.ajax({
+  			  type:"post",
+  			  url:url,
+  			  data:{
+  				userid: userid,
+  				ssid: ssidVal,
+  				password: passwordVal,
+  				nodeIdArr: nodeIdArr.join(","),
+  			  },
+  			  async : true,
+  			  datatype: "String",
+  			  success:function(datasource, textStatus, jqXHR) {
+  				  if(datasource > 0){
+	      					layer.msg(datasource + " " + jQuery.i18n.prop('NCmdSuccess') + jQuery.i18n.prop('NCmdSuccess'),function(){
+		      					location.reload();
+		      				  });
+  				  }else if(datasource == "指令发送失败"){
+	      					layer.msg(jQuery.i18n.prop('cmdSendFail'),function(){
+	      						location.reload();
+		      				  });
+  				  }else if(datasource == "指令发送失败请检查设备是否已离线"){
+  					layer.msg(jQuery.i18n.prop('TipDevOffline'),function(){
+  						location.reload();
+      				  });
+  				  }else{
+  					  
+  				  }
+  			  },
+  			  error: function() {  
+  				  //提交失败
+  				  layer.msg(jQuery.i18n.prop('submitFailed'));
+  	      		}
+    		});	
+		}
+	}
 	</script>
 </body>
 </html>

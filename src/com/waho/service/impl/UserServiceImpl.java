@@ -151,7 +151,6 @@ public class UserServiceImpl implements UserService {
 			try {
 				user = userDao.selectUserByUsername(username);
 				if (user == null) {
-
 					user = new User();
 					user.setUsername(username);
 					user.setPassword(MD5Utils.MD5Encode(password, "utf-8"));
@@ -175,9 +174,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public String userRenameNode(String nodeid, String nodeName) {
+	public String userRenameNode(String nodeid, String nodeName, String i18nLanguage) {
 		int id;
+		// 初始化提示字符串
 		String res = "";
+		String string1 = "The name already exists!"; // 该名称已存在；默认环境为英文
+		String string2 = "Modified success!"; //修改成功,默认环境为英文
+		String string3 = "Modification failed!"; // 修改成功,默认环境为英文	
+		// 根据语言环境给提示字符串赋值
+		if(i18nLanguage.equals("zh-CN")) {
+			string1 = "该名称已存在!";
+			string2 = "修改成功!";
+			string3 = "修改失败!";
+		}
 		try {
 			id = Integer.parseInt(nodeid);
 			NodeDao nodeDao = new NodeDaoImpl();
@@ -188,16 +197,15 @@ public class UserServiceImpl implements UserService {
 		    list = nodeDao.selectNodesByUserid(node.getUserid());
 		    for(Node obj : list) {
 		    	if(obj.getNodeName().equals(nodeName)) {
-		    		 res = "该名称已存在!";
-		    		 return res;
+		    		 return string1;
 		    	}
 		    }
 		    if(res == "" && node != null) {
 		    	int result = nodeDao.updateNodeNameById(id, nodeName);
 		    	if (result > 0) {
-		    		res = "修改成功!";
+		    		res = string2;
 				}else {
-					res = "修改失败!";
+					res = string3;
 				}
 		    }
 			
@@ -686,10 +694,11 @@ public class UserServiceImpl implements UserService {
 									socket.sendMessage(cmdStr);
 									count++;
 									logger.info("service to " + node.getMac() + ":" + cmdStr);
-									//记录此次节点和分组的操作类型lastOperateType;
+								/*	//记录此次节点和分组的操作类型lastOperateType;
 									String operateType = "dim";
-									nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
+									//nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
 									groupDao.updateLastOperateTypeByGroupid(operateType,groupid);
+							    */
 								}
 							}
 						}
@@ -783,10 +792,11 @@ public class UserServiceImpl implements UserService {
 								socket.sendMessage(cmdStr);
 								count++;
 								logger.info("service to " + node.getMac() + ":" + cmdStr);
-								//4.记录此次节点与分组操作类型lastOperateType;
+							/*	//4.记录此次节点与分组操作类型lastOperateType;
 								String operateType = "toning";
 								nd.updateLastOperateTypeByNodeid(operateType,node.getId());
 								groupDao.updateLastOperateTypeByGroupid(operateType,groupid);
+							*/
 							}
 						}
 					}
@@ -827,8 +837,9 @@ public class UserServiceImpl implements UserService {
 								logger.info("service to " + node.getMac() + ":" + cmdStr);
 								//4.记录此次节点与分组操作类型lastOperateType;
 								String operateType = "luxdim";
-								nd.updateLastOperateTypeByNodeid(operateType,node.getId());
+								//nd.updateLastOperateTypeByNodeid(operateType,node.getId());
 								groupDao.updateLastOperateTypeByGroupid(operateType,groupid);
+								
 							}
 						}
 					}
@@ -1051,6 +1062,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean addPloyOperateOfToning(int userid, int ployid, int hours, int minutes, Date startDate, Date endDate,
 			int value) {
+		System.out.println("value:"+value);
 		PloyOperateDao poDao = new PloyOperateDaoImpl();
 		PloyDao ployDao = new PloyDaoImpl();
 		Ploy ploy = new Ploy();
@@ -1189,9 +1201,11 @@ public class UserServiceImpl implements UserService {
 						String cmdStr = JSON.toJSONString(cmd);
 						socket.sendMessage(cmdStr);
 						logger.info("service to " + node.getMac() + ":" + cmdStr);
-						//4.记录此次操作类型lastOperateType;
+						/*
+						 * //4.记录此次操作类型lastOperateType;
 						String operateType = "toning";
 						nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
+						*/
 						return true;
 					}
 				}
@@ -1250,7 +1264,6 @@ public class UserServiceImpl implements UserService {
 		AlarmDao alarmDao = new AlarmDaoImpl();
 		try {
 			for(int index=0; index < alarmIdArr.length; index++) {
-				System.out.println("id:"+alarmIdArr[index]);
 				int x = alarmDao.deleteAlarmById(Integer.parseInt(alarmIdArr[index]));
 				if(x == 1) {
 					count++;
@@ -1267,9 +1280,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Map<String, Object> getNodeListByUserid(int userid) {
+	public Map<String, Object> getNodeListByUserid(int userid,String i18nLanguage) {
 		NodeDao nodeDao = new NodeDaoImpl();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
+		// 根据系统语言类型，得到相应的语言字符串,作为前端tree的父节点的名称
+		String BallastStr = "Ballast"; //默认英文环境
+		String ledDriverStr = "LED Driver";
+		String WWDStr = "Wifi Wireless Dimmer"; 
+		if(i18nLanguage.equals("zh-CN")) {
+			 BallastStr = "镇流器"; 
+		     ledDriverStr = "Led驱动器";
+			 WWDStr = "Wifi无线调光器"; 
+		}
 		//根据节点类型获取到镇流器节点集合、led驱动器集合、wifi无线调光器集合；
 		List<Node> nodeList1 = new ArrayList<Node>(); //镇流器集合
 		List<Node> nodeList2 = new ArrayList<Node>();  //led驱动器集合
@@ -1308,19 +1330,22 @@ public class UserServiceImpl implements UserService {
 			//得到节点tree对象
 			NodeTreeModel nodeTreeModel1 = new NodeTreeModel();
 			nodeTreeModel1.setId(1);
-			nodeTreeModel1.setLabel("镇流器");
+			//nodeTreeModel1.setLabel("镇流器");
+			nodeTreeModel1.setLabel(BallastStr);
 			nodeTreeModel1.setSpread(false);
 			nodeTreeModel1.setChildren(treeChildrenList1);
 			
 			NodeTreeModel nodeTreeModel2 = new NodeTreeModel();
 			nodeTreeModel2.setId(2);
-			nodeTreeModel2.setLabel("Led驱动器");
+			//nodeTreeModel2.setLabel("Led驱动器");
+			nodeTreeModel2.setLabel(ledDriverStr);
 			nodeTreeModel2.setSpread(false);
 			nodeTreeModel2.setChildren(treeChildrenList2);
 			
 			NodeTreeModel nodeTreeModel3 = new NodeTreeModel();
 			nodeTreeModel3.setId(3);
-			nodeTreeModel3.setLabel("wifi无线调光器");
+			//nodeTreeModel3.setLabel("wifi无线调光器");
+			nodeTreeModel3.setLabel(WWDStr);
 			nodeTreeModel3.setSpread(false);
 			nodeTreeModel3.setChildren(treeChildrenList3);
 			
@@ -1352,7 +1377,6 @@ public class UserServiceImpl implements UserService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		*/
 		return resultMap;
 	}
@@ -1400,7 +1424,6 @@ public class UserServiceImpl implements UserService {
 		try {
 			// 获取分组集合
 			result = groupDao.selectGroupByUseridAndType(userid, groupType);
-			
 			// 移除变量groupid所在的分组
 	        Iterator<Group> it = result.iterator(); //获取迭代器
 	        while(it.hasNext()){
@@ -1408,9 +1431,7 @@ public class UserServiceImpl implements UserService {
 	            if(group.getGroupid() == groupid){
 	                it.remove();
 	            }
-	        }
-	        
-
+	        } 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

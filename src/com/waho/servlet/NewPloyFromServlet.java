@@ -37,6 +37,7 @@ public class NewPloyFromServlet extends HttpServlet {
 		//1.获取表单数据
 		String userid = request.getParameter("userid");
 		String groupType = request.getParameter("groupType");
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
 		//2. 处理业务逻辑
 		if(null != userid && "".equals(userid) == false && null != groupType && "".equals(groupType) == false) {
 			UserService us = new UserServiceImpl();
@@ -46,6 +47,7 @@ public class NewPloyFromServlet extends HttpServlet {
 		//3.分发转向
 		request.setAttribute("userid", userid);
 		request.setAttribute("groupType", groupType);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/newPloy.jsp").forward(request, response);
 	}
 

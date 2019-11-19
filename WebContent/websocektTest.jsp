@@ -22,7 +22,7 @@
 		websocket = new WebSocket("ws://localhost:8080/wifiProject/websocket");//服务器端
 		//websocket = new WebSocket("ws://localhost:18080/wifiProject1/websocket");//服务器的本地测试
 	} else {
-		alert('当前浏览器 Not support websocket')
+		alert('当前浏览器 Not support websocket');
 	}
 
 	//连接发生错误的回调方法

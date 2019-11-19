@@ -37,22 +37,26 @@ public class HomeServlet extends HttpServlet {
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html; charset=UTF-8");
-		// 获取表单数据
+		//1. 获取表单数据
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		
-		// 调用业务逻辑
+		//用于传递给jsp，在js中根据语言的类型去获取相应的语言库
+		String i18nLanguageStr = request.getParameter("i18nLanguage");
+	
+		//2. 调用业务逻辑
 		UserService userService = new UserServiceImpl();
 		Map<String, Object> result = userService.login(username, password);
-		// 分发转向
 		if (null == result) {
 			// 跳转error页面 or 返回错误信息
-			response.setHeader("refresh","3;/wifiProject/admin/login.jsp"); 
-			response.getWriter().write("用户名或密码错误!3秒后跳转回登录界面。");
+			response.setHeader("refresh","3;/wifiProject"); //客户端
+			//response.setHeader("refresh","3;/wifiProject1"); //本地测试
+			response.getWriter().write("User does not exist, Wrong user name or password(用户不存在或信息填写错误!)");
 		} else {
 			request.setAttribute("result", result);
+			request.setAttribute("i18nLanguage", i18nLanguageStr);
 			request.getRequestDispatcher("/admin/home.jsp").forward(request, response);
 		}
+		
 	}
 
 	/**

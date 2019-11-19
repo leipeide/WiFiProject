@@ -47,29 +47,25 @@ public class RepasswordServlet extends HttpServlet {
 			int userid = Integer.parseInt(useridStr);
 			User user = new User();
 		    user = us.getUserMessage(userid);
-		 //判断密码是否正确
-		 if(!prePassword.equals(user.getPassword())) {
-			request.setAttribute("ckpw", "密码错误，请重新输入！");
-			request.setAttribute("userid", userid);
-			request.getRequestDispatcher("/admin/rePassword.jsp").forward(request, response);
-			return;
-		}else if(!rePassword.equals(newPassword)) {
-			request.setAttribute("cknpw", "两次密码不一致，请重新输入！");
-			request.setAttribute("userid", userid);
-			request.getRequestDispatcher("/admin/rePassword.jsp").forward(request, response);
-			return;
-		}else if(us.updateUserPassword(userid,newPassword)) {
-			request.setAttribute("retext", "密码修改成功！");
-			request.setAttribute("userid", userid);
-			request.getRequestDispatcher("/admin/rePassword.jsp").forward(request, response);
+		    //判断密码是否正确
+	         /**
+			 * 注意：此处的中文不要轻易的去改，涉及到前端判断字符串去查询相应的语言库；
+			 * 若修改，需要前后端统一
+			 */
+			 
+			 if(!prePassword.equals(user.getPassword())) { //原密码输入错误
+				 response.getWriter().write("原密码错误请重新输入");
+			 }else {
+				 if(us.updateUserPassword(userid,newPassword)) {
+					 response.getWriter().write("密码修改成功");
+				 }else {
+					 response.getWriter().write("密码修改失败");
+				 }
+			 }
 		}else {
-			request.setAttribute("retext", "密码修改失败！");
-			request.setAttribute("userid",userid);
-			request.getRequestDispatcher("/admin/rePassword.jsp").forward(request, response);
-		}
+			 response.getWriter().write("提交失败");
 		}
 	}
-
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */

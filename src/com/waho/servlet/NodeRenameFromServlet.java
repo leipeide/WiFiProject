@@ -34,6 +34,7 @@ public class NodeRenameFromServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// 获取参数
 		request.setAttribute("nodeid", request.getParameter("nodeid"));
+		request.setAttribute("i18nLanguage", request.getParameter("i18nLanguage"));
 		// 调用逻辑
 		UserService us = new UserServiceImpl();
 		Node node = us.getNodeByIdString(request.getParameter("nodeid"));

@@ -33,7 +33,7 @@ public class WifiBroadcastControlServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html;charset=utf-8");
+		response.setContentType("application/json;charset=utf-8");
 		//1.获取表单上数据
 		String useridStr = request.getParameter("userid");
 		String luxParamStr = request.getParameter("luxParam");
@@ -41,29 +41,33 @@ public class WifiBroadcastControlServlet extends HttpServlet {
 		//2.处理业务逻辑
 		if(null != useridStr && "".equals(useridStr) == false && 
 				null != luxParamStr && "".equals(luxParamStr) == false) {
-			
 			int userid = Integer.parseInt(useridStr);
 			int luxParam = Integer.parseInt(luxParamStr);
 			String Cmd = "";
-			if(switchState != null && switchState.equals("on")) {
+			if(switchState != null && switchState.equals("true")) {
 				Cmd = "autoluxdim";
 			} else {
 				Cmd = "luxdim";
 			}
-			System.out.println("用户id："+userid+"lux调光类型："+Cmd+"广播功能参数："+luxParamStr);
 			//2.处理业务逻辑
 			NodeService nodeService = new NodeServiceImpl();
 			Boolean result = nodeService.writeWifiBroadcastCmd(Integer.parseInt(useridStr),Integer.parseInt(luxParamStr),Cmd);
 			//3.分发转向
 			if(result) {
-				response.getWriter().write("指令发送成功!");
+				/**
+				 * 注意：此处的中文不要轻易的去改，涉及到前端判断字符串去查询相应的语言库，若修改，需要前后端统一
+				 */
+				response.getWriter().write(JSON.toJSONString("指令发送成功"));
+				//response.getWriter().write("指令发送成功");
 			}else {
-				response.getWriter().write("节点离线或不存在节点!");
+				//response.getWriter().write("节点离线或节点不存在");
+				response.getWriter().write(JSON.toJSONString("节点离线或节点不存在"));
 			}
 			return;
 		}
 		//3.分发转向
-		response.getWriter().write("提交失败！");
+		//response.getWriter().write("提交失败");
+		response.getWriter().write(JSON.toJSONString("提交失败"));
 	}
 
 	/**

@@ -31,9 +31,11 @@ public class GroupDimFromServlet extends HttpServlet {
 		//1.获取表单数据
 		String groupid = request.getParameter("groupid");
 		String userid = request.getParameter("userid");
+		String i18nLanguageStr = request.getParameter("i18nLanguageStr");
 		//2.分发转向
 		request.setAttribute("userid", userid);
 		request.setAttribute("groupid", groupid);
+		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/groupDimFrom.jsp").forward(request, response);
 	}
 

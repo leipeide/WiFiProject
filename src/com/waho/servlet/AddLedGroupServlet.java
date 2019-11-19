@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.waho.dao.GroupDao;
 import com.waho.dao.impl.GroupDaoImpl;
 import com.waho.domain.Group;
@@ -33,11 +34,10 @@ public class AddLedGroupServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html;charset=utf-8");
+		response.setContentType("application/json;charset=utf-8");
 		//1.获取表单数据
 		String userid = request.getParameter("userid");
 		String groupName = request.getParameter("newName");
-		//System.out.println("groupName:"+groupName);
 		//2.业务逻辑处理
 		if(null != userid) {
 			UserService userService = new UserServiceImpl();
@@ -47,12 +47,12 @@ public class AddLedGroupServlet extends HttpServlet {
 				group = groupDao.selectGroupByGroupNameAndUserid(groupName,Integer.parseInt(userid));
 				if(group == null) {
 					if(userService.addLedGroupToUser(groupName,Integer.parseInt(userid))) {
-						response.getWriter().write("新建分组成功！");
+						response.getWriter().write(JSON.toJSONString("新建分组成功"));
 					}else {
-						response.getWriter().write("新建分组失败！");
+						response.getWriter().write(JSON.toJSONString("新建分组失败"));
 					}
 				}else {
-					response.getWriter().write("该分组已存在！");
+					response.getWriter().write(JSON.toJSONString("该分组已存在"));
 				}
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
@@ -63,7 +63,7 @@ public class AddLedGroupServlet extends HttpServlet {
 			}
 			
 		}else {
-			response.getWriter().write("新建分组失败！");
+			response.getWriter().write(JSON.toJSONString("新建分组失败"));
 		}
 	}
 
