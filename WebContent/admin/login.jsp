@@ -42,9 +42,9 @@ html {
 	<div class="languageDiv">
 		<div class="languageChange"><span style="font-size:16px; color:red;" class="i18n" name="Lchange"></span></div>
 		<div class="languageSelect">
-			 <select id="language">
-                <option value="zh-CN">中文简体</option>
-                <option value="en">English</option>
+			 <select id="language" style="width:100px;">
+                <option value="zh-CN" class="i18n" name="LChinese"></option>
+                <option value="en" class="i18n" name="LEnglish"></option>
             </select>
 		</div>
 	</div>

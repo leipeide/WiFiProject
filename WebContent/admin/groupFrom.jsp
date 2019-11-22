@@ -1454,7 +1454,6 @@ function groupDimByLux(url,groupid,userid){
 function removeNodeFromBallastGroup(url,groupid,nodeid,userid){
 	layer.confirm(jQuery.i18n.prop("RemoveNodeFromGroupTip") //确定将节点从分组内移除？
 		  	,{ 
-		 	offset:['0px','350px'],
 	 		title:jQuery.i18n.prop('Tips'),
 	      	btn: [jQuery.i18n.prop('confirmBtn'),jQuery.i18n.prop('Lcancel')], //确定，取消按钮
         	btn1: function(){
@@ -1511,7 +1510,6 @@ function removeNodeFromBallastGroup(url,groupid,nodeid,userid){
 function removeNodeFromLedGroup(url,groupid,nodeid,userid){
 	 layer.confirm(jQuery.i18n.prop("RemoveNodeFromGroupTip") //确定将节点从分组内移除？
 			,{ 
-		  	offset:['0px','350px'],
 			title:jQuery.i18n.prop('Tips'),
 	      	btn: [jQuery.i18n.prop('confirmBtn'),jQuery.i18n.prop('Lcancel')], //确定，取消按钮
 	      	btn1: function(){
@@ -1569,7 +1567,6 @@ function removeNodeFromLedGroup(url,groupid,nodeid,userid){
 function removeNodeFromWifiGroup(url,groupid,nodeid,userid){
 	 layer.confirm(jQuery.i18n.prop("RemoveNodeFromGroupTip") //确定将节点从分组内移除？
 		  ,{ 
-		  offset:['0px','350px'],
 		  title:jQuery.i18n.prop('Tips'),
 		  btn: [jQuery.i18n.prop('confirmBtn'),jQuery.i18n.prop('Lcancel')], //确定，取消按钮
 	      btn1: function(){

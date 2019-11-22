@@ -94,14 +94,20 @@
 			language : i18nLanguage,
 			callback : function() {//加载成功后设置显示内容
 				// 第一类：layui的label
-				var insertLabelEle = jQuery(".label"); // 获得所有id为i18n的元素
-				insertLabelEle.each(function() { // 遍历，根据i18n元素的 name 获取语言库对应的内容写入
+				var insertLabelEle = jQuery(".label"); // 获得所有id为label的元素
+				insertLabelEle.each(function() { // 遍历，根据label元素的 name 获取语言库对应的内容写入
 					jQuery(this).html(
 							jQuery.i18n.prop(jQuery(this).attr('name')));
 				});
 				// 第二类：layui的button
 				var insertBtnEle = jQuery(".layui-btn"); // 获得所有id为layui-btn的元素
 				insertBtnEle.each(function() { // 遍历，根据layui-btn元素的 name 获取语言库对应的内容写入
+					jQuery(this).html(
+							jQuery.i18n.prop(jQuery(this).attr('name')));
+				});
+				// 第一类：layui 的i18n
+				var insertEle = jQuery(".i18n"); // 获得所有id为i18n的元素
+				insertEle.each(function() { // 遍历，根据i18n元素的 name 获取语言库对应的内容写入
 					jQuery(this).html(
 							jQuery.i18n.prop(jQuery(this).attr('name')));
 				});
