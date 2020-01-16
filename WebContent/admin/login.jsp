@@ -75,8 +75,8 @@ html {
 						</div>
 						<div class="layui-form-item">
 							<div class="layui-input-block">
-								<button class="layui-btn" lay-submit style="margin-left:5px;"
-									lay-filter="loginFilter"  name="Llogin"></button>
+								<button class="layui-btn" lay-submit lay-filter="loginFilter" 
+									style="margin-left:5px;" name="Llogin"></button>
 									 
 								<a class="layui-btn" name="Lregister" style="margin-left:62px;"
 									href="${pageContext.request.contextPath }/registerServlet" ></a>

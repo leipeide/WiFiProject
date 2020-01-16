@@ -351,9 +351,10 @@
 										<th class="i18n" name="NodeName"></th>
 										<th class="i18n" name="NetworkState"></th>
 <!-- 										<th  class="i18n" name="SwitchLightStatus">开关状态</th> -->
-										<th  class="i18n" name="DimPara"></th>
-     									<th  class="i18n" name="SingleLampControl"></th>
-										<th  class="i18n" name="LDelete"></th>
+										<th class="i18n" name="DimPara"></th>
+										<th class="i18n" name="LightSensorPara"></th>
+     									<th class="i18n" name="SingleLampControl"></th>
+										<th class="i18n" name="LDelete"></th>
 									</tr>
 								</thead>
 								<tbody id="wifiGroupsTbody">
@@ -1042,6 +1043,7 @@
 									//inner = inner + "离线";
 								}
 								inner = inner + "</td>\
+								<td>" +  node.precentage + "%</td>\
 								<td>" +  node.lux + " lux</td>\
 								<td><a href='javascript:;' class='layui-btn layui-btn-xs' onclick=\"nodeLuxDim('${pageContext.request.contextPath }/nodeInGroupLuxDimFromServlet',"+ node.id +")\">调光</a></td>\
 								<td><a href='javascript:;' class='layui-btn layui-btn-xs' onclick=\"removeNodeFromWifiGroup('${pageContext.request.contextPath }/removeNodeFromGroupServlet',"+groupId+","+node.id+","+node.userid+")\"><i class='layui-icon'>&#xe640;</i></a></td>\
@@ -1061,6 +1063,7 @@
 									//inner = inner + "离线";
 								}
 								inner = inner + "</td>\
+								<td>" +  node.precentage + "%</td>\
 								<td>" +  node.lux + " lux</td>\
 								<td><a href='javascript:;' class='layui-btn layui-btn-xs' onclick=\"nodeLuxDim('${pageContext.request.contextPath }/nodeInGroupLuxDimFromServlet',"+ node.id +")\">Dim</a></td>\
 								<td><a href='javascript:;' class='layui-btn layui-btn-xs' onclick=\"removeNodeFromWifiGroup('${pageContext.request.contextPath }/removeNodeFromGroupServlet',"+groupId+","+node.id+","+node.userid+")\"><i class='layui-icon'>&#xe640;</i></a></td>\
@@ -1415,7 +1418,7 @@ function groupToningNode(url,groupid,userid){
 }
 
 /**
- * 分组控制通过lux调光
+ * wifi分组控制通过调光（自动调光、pwm调光）
  * @param url
  * @param groupid
  * @param userid
@@ -1425,7 +1428,7 @@ function groupDimByLux(url,groupid,userid){
 	layui.use('layer', function() {
 		var layer = layui.layer;
 		layer.open({
-			area : [ '400px', '250px' ],
+			area : [ '400px', '280px' ],
 			btnAlign : 'c',
 			resize : false,
 			content : url + "?groupid=" + groupid + "&userid=" + userid + "&i18nLanguage=" + i18nLanguage,

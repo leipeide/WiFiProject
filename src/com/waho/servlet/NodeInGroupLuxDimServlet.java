@@ -33,19 +33,15 @@ public class NodeInGroupLuxDimServlet extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("application/json;charset=utf-8");
 		//1.获取表单数据
-		String lux = request.getParameter("lux");
+		String dimParamStr = request.getParameter("dimParam");
 		String nodeid = request.getParameter("nodeid");
-		String switchState = request.getParameter("switchState");
+		//调光类型：pwmdim、autoluxdim
+		String cmd = request.getParameter("functionStr");
+		
 		//2.处理业务逻辑
-		String cmd = "";
-		if(switchState != null && switchState.equals("on")) {
-			cmd = "autoluxdim";
-		} else {
-			cmd = "luxdim";
-		}
 		if(nodeid != null) {
 			NodeService nodeService = new NodeServiceImpl();
-			boolean result = nodeService.nodeInGrouopLuxDimCmd(Integer.parseInt(nodeid),Integer.parseInt(lux),cmd);
+			boolean result = nodeService.nodeInGrouopLuxDimCmd(Integer.parseInt(nodeid),Integer.parseInt(dimParamStr),cmd);
             /**
              * 3.分发转向
              * 注意：此处的中文不要轻易的去改，涉及到前端判断字符串去查询相应的语言库；

@@ -35,23 +35,18 @@ public class GroupLuxDimServlet extends HttpServlet {
 		//1.获取表单上数据
 		String useridStr = request.getParameter("userid");
 		String groupidStr = request.getParameter("groupid");
-		String luxParamStr = request.getParameter("luxParam");
-		String switchState = request.getParameter("switchState");
+		String dimParamStr = request.getParameter("dimParam");
+		String Cmd = request.getParameter("functionStr");//pwmdim、autoluxdim
 		//2.处理业务逻辑
 		if(null != useridStr && "".equals(useridStr) == false && null != groupidStr 
-				&& "".equals(groupidStr) == false && null != luxParamStr && "".equals(luxParamStr) == false) {
+				&& "".equals(groupidStr) == false && null != Cmd 
+				&& "".equals(Cmd) == false && null != dimParamStr && "" != dimParamStr) {
 			
 			int userid = Integer.parseInt(useridStr);
 			int groupid = Integer.parseInt(groupidStr);
-			int luxParam = Integer.parseInt(luxParamStr);
-			String Cmd = "";
-			if(switchState != null && switchState.equals("true")) {
-				Cmd = "autoluxdim";
-			} else {
-				Cmd = "luxdim";
-			}
+			int dimParam = Integer.parseInt(dimParamStr);
 			UserService us = new UserServiceImpl();
-			int result = us.groupWriteLuxDimCmd(userid,groupid,luxParam,Cmd);
+			int result = us.groupWriteLuxDimCmd(userid,groupid,dimParam,Cmd);
 		    /**
 		     * 3.分发转向
 			 * 注意：此处的中文不要轻易的去改，涉及到前端判断字符串去查询相应的语言库，

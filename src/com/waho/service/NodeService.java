@@ -34,11 +34,11 @@ public interface NodeService {
 	/**
 	 * 根据节点id对wifi进行调光
 	 * @param nodeid
-	 * @param lux
+	 * @param dimParam
 	 * @param cmd 
 	 * @return
 	 */
-	boolean wifiNodeLuxDimByNodeid(int nodeid, int lux, String cmd);
+	boolean wifiNodeLuxDimByNodeid(int nodeid, int dimParam, String cmd);
 	/**
 	 * 通过groupNode集合得到分组下的所有节点的信息集合List<node>;此方法是通用的，作为通用方法
 	 * @param gnList
@@ -64,11 +64,11 @@ public interface NodeService {
 	/**
 	*wifi无线调光器节点发送广播指令
 	 *@param userid
-	 * @param luxParam;lux调光参数
-	 * @param cmd：autoluxdim、luxdim；调光功能类型字符串，
+	 * @param dimParam;调光参数
+	 * @param cmd：autoluxdim、pwmdim；调光功能类型字符串，
 	 * @return
 	 */
-	Boolean writeWifiBroadcastCmd(int userid, int luxParam, String Cmd);
+	Boolean writeWifiBroadcastCmd(int userid, int dimParam, String Cmd);
 	/**
 	 * 分组内的节点单灯开关
 	 * @param nodeid
@@ -93,9 +93,9 @@ public interface NodeService {
 	/**
 	 * 分组内节点lux调光控制
 	 * @param nodeid
-	 * @param lux
-	 * @param cmd
+	 * @param dimParam
+	 * @param cmd(pwmdim\autoluxdim)
 	 * @return
 	 */
-	boolean nodeInGrouopLuxDimCmd(int nodeid, int lux, String Cmd);
+	boolean nodeInGrouopLuxDimCmd(int nodeid, int dimParam, String Cmd);
 }

@@ -85,6 +85,11 @@ public interface NodeDao {
 	 */
 	public int updateLuxByMac(Node node) throws Exception;
 	/**
+	 * 根据节点mac地址更新wifi节点的lux参数和precenteage参数。
+	 * @param node
+	 */
+	public void updateLuxAndPrecentageByMac(Node node)throws Exception;
+	/**
 	 * 根据节点mac得到节点对象
 	 * @param mac
 	 * @return
@@ -178,5 +183,6 @@ public interface NodeDao {
 	 * @throws Exception
 	 */
 	public void updateLastOperateTypeByNodeid(String operateType, int nodeid)throws Exception;
+	
 	
 }

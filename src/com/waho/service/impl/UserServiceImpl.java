@@ -811,7 +811,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int groupWriteLuxDimCmd(int userid, int groupid, int luxParam,String Cmd) {
+	public int groupWriteLuxDimCmd(int userid, int groupid, int dimParam,String Cmd) {
 		GroupNodeDao gnd = new GroupNodeDaoImpl();
 		GroupDao groupDao = new GroupDaoImpl();
 		NodeDao nd = new NodeDaoImpl();
@@ -830,11 +830,18 @@ public class UserServiceImpl implements UserService {
 								Message cmd = new Message();
 								cmd.setMsg("request");
 								cmd.setCmd(Cmd);
-								cmd.setLux(luxParam);
+								if(Cmd.equals("autoluxdim")) { //自动调光指令
+									cmd.setLux(dimParam);
+									count++;
+								}else if(Cmd.equals("pwmdim")) {
+									cmd.setPrecentage(dimParam);
+									count++;
+								}else {
+									
+								}
 								String cmdStr = JSON.toJSONString(cmd);
 								socket.sendMessage(cmdStr);
-								count++;
-								logger.info("service to " + node.getMac() + ":" + cmdStr);
+								logger.info("service to " + " " +node.getMac() + ":" + cmdStr);
 								//4.记录此次节点与分组操作类型lastOperateType;
 								String operateType = "luxdim";
 								//nd.updateLastOperateTypeByNodeid(operateType,node.getId());

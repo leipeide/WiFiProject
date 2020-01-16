@@ -97,7 +97,7 @@
 											</a>
 										</div>
 									</c:if> 
-									<c:if test="${ lastOperateType == null}">
+									<c:if test="${ lastOperateType == null }">
 										<div class="layui-btn-container">
 											<a href="javascript:;" class="layui-btn layui-btn-xs"
 												onclick="switchOnNode('${pageContext.request.contextPath }/switchNodeServlet', ${ballast.id })">
@@ -244,6 +244,7 @@
 							<th class="i18n" name="NodeName"></th>
 							<th class="i18n" name="NetworkState"></th>
 							<th class="i18n" name="DimPara"></th>
+							<th class="i18n" name="LightSensorPara"></th>
 							<th><a href="javascript:;"
 								onclick="BroadcastControl('${pageContext.request.contextPath }/broadcastControlFormServlet', ${userid}, 'wifiBC')">
 									<font class="i18n" name="BroadcastControl" color="#009688"></font>
@@ -260,6 +261,7 @@
 										<font color="#009688">${wifi.nodeName }</font>
 								</a></td>
 								<td>${wifi.online == true ? "online" : "offline" }</td>
+								<td>${wifi.precentage }%</td>
 								<td>${wifi.lux } lux</td>
 								<td><div class="layui-btn-group">
 									<a href="javascript:;" class="layui-btn layui-btn-xs"
@@ -493,7 +495,7 @@
 		 */
 		function luxDimNode(url,nodeid){
 			layer.open({
-				area : [ '400px', '260px' ],
+				area : [ '400px', '280px' ],
 				btnAlign : 'c',
 				resize : false,
 				content : url + "?nodeid=" + nodeid + "&i18nLanguage=" + i18nLanguage,

@@ -162,7 +162,7 @@ public class NodeServiceImpl implements NodeService {
 	}
 
 	@Override
-	public boolean wifiNodeLuxDimByNodeid(int nodeid, int lux,String Cmd) {
+	public boolean wifiNodeLuxDimByNodeid(int nodeid, int dimParam,String Cmd) {
 		try {
 			NodeDao nodeDao = new NodeDaoImpl();
 			Node node = nodeDao.selectNodeById(nodeid);
@@ -175,10 +175,14 @@ public class NodeServiceImpl implements NodeService {
 						Message cmd = new Message();
 						cmd.setMsg("request");
 						cmd.setCmd(Cmd);
-						cmd.setLux(lux);
+						if(Cmd.equals("autoluxdim")) {
+							cmd.setLux(dimParam);
+						}else if(Cmd.equals("pwmdim")) {
+							cmd.setPrecentage(dimParam);
+						}
 						String cmdStr = JSON.toJSONString(cmd);
 						socket.sendMessage(cmdStr);
-						logger.info("service to " + node.getMac() + ":" + cmdStr);
+						logger.info("service to " + " " + node.getMac() + ":" + cmdStr);
 						//2.记录此次操作类型lastOperateType;
 						String operateType = "dim";
 						nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
@@ -343,10 +347,10 @@ public class NodeServiceImpl implements NodeService {
 	}
 
 	@Override
-	public Boolean writeWifiBroadcastCmd(int userid, int luxParam, String Cmd) {
+	public Boolean writeWifiBroadcastCmd(int userid, int dimParam, String Cmd) {
 		NodeDao nodeDao = new NodeDaoImpl();
 		List<Node> list =  new ArrayList<>();
-		//cmd字段为autoluxdim、luxdim；调光功能类型字符串：自动调光、调光，
+		//cmd字段为autoluxdim、pwmdim；调光功能类型字符串：自动调光、pwm调光，
 		try {
 			//1.根据用户id查找wifi无线调光器节点集合；注意：wifi无线调光器节点类型type的范围是21-30；
 			list = nodeDao.selectWifiNodeByUseridAndType(userid);
@@ -361,8 +365,14 @@ public class NodeServiceImpl implements NodeService {
 								//3.发送json格式的调光指令
 								Message cmd = new Message();
 								cmd.setMsg("request");
-							    cmd.setCmd(Cmd);
-							    cmd.setLux(luxParam);
+								cmd.setCmd(Cmd);
+								if(Cmd.equals("autoluxdim")) {
+									cmd.setLux(dimParam);
+								}else if(Cmd.equals("pwmdim")) {
+									cmd.setPrecentage(dimParam);
+								}else {
+									return false;
+								}
 								String cmdStr = JSON.toJSONString(cmd);
 								socket.sendMessage(cmdStr);
 								logger.info("service to " + obj.getMac() + ":" + cmdStr);
@@ -492,7 +502,7 @@ public class NodeServiceImpl implements NodeService {
 	}
 
 	@Override
-	public boolean nodeInGrouopLuxDimCmd(int nodeid, int lux, String Cmd) {
+	public boolean nodeInGrouopLuxDimCmd(int nodeid, int dimParam, String Cmd) {
 		try {
 			NodeDao nodeDao = new NodeDaoImpl();
 			Node node = nodeDao.selectNodeById(nodeid);
@@ -505,7 +515,15 @@ public class NodeServiceImpl implements NodeService {
 						Message cmd = new Message();
 						cmd.setMsg("request");
 						cmd.setCmd(Cmd);
-						cmd.setLux(lux);
+						if(Cmd.equals("autoluxdim")) {
+							cmd.setLux(dimParam);
+							System.out.println(Cmd);
+						}else if(Cmd.equals("pwmdim")) {
+							cmd.setPrecentage(dimParam);
+							System.out.println(Cmd);
+						}else {
+							return false;
+						}
 						String cmdStr = JSON.toJSONString(cmd);
 						socket.sendMessage(cmdStr);
 						logger.info("service to " + node.getMac() + ":" + cmdStr);

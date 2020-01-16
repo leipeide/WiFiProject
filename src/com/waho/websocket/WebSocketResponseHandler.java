@@ -27,19 +27,20 @@ public class WebSocketResponseHandler {
 	}
 
 	private static void wifidimHandle(Session session, Message msg) {
-		if ((msg.getCmd().equals("luxdim") || msg.getCmd().equals("autoluxdim")) && msg.getErr() == 0) {
+		if ((msg.getCmd().equals("pwmdim")  || msg.getCmd().equals("autoluxdim")) && msg.getErr() == 0) {
 			Node node = new Node();
 			node.setMac(msg.getMac());
 			node.setLux(msg.getLux());;
+			node.setPrecentage(msg.getPrecentage());
 			NodeDao nodeDao = new NodeDaoImpl();
 			try {
-				nodeDao.updateLuxByMac(node);
+				//nodeDao.updateLuxByMac(node);
+				nodeDao.updateLuxAndPrecentageByMac(node);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
 	}
 
 	private static void toningHandle(Session session, Message msg) {

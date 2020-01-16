@@ -9,9 +9,12 @@
 	href="${pageContext.request.contextPath }/layui/css/layui.css">
 <script type="text/javascript"
 	src="${pageContext.request.contextPath }/layui/layui.js"></script>
+<!-- i18n国际化语言包 -->
+<script type="text/javascript" 
+	src="${pageContext.request.contextPath }/admin/js/jquery.min.js"></script>  
+<script type="text/javascript"
+ 	src="${pageContext.request.contextPath }/admin/js/jquery.i18n.properties.js"></script>
 <title class="i18n" name="LhomeJspTitle"></title>
-<style type="text/css">
-</style>
 </head>
 <body class="layui-layout-body">
 		<div class="layui-layout layui-layout-admin">
@@ -80,14 +83,36 @@
 				<!-- © 雷培德WiFi灯控系统 -->
 			</div>
 		</div>
-	<!-- i18n国际化语言包 -->
-	<script type="text/javascript" 
-		src="${pageContext.request.contextPath }/admin/js/jquery.min.js"></script>  
- 	<script type="text/javascript"
- 		src="${pageContext.request.contextPath }/admin/js/jquery.i18n.properties.js"></script>
-	<script type="text/javascript"
-		src="${pageContext.request.contextPath }/admin/js/home.js"></script>
 	<script type="text/javascript">
+	//2. 获取id为hiddenLan的value值，i18nLanguage为全局变量，是当前系统的语言环境
+	var i18nLanguage = jQuery("#hiddenLan").val(); 
+
+	//3.重要：这里需要进行i18n的翻译；进入相应语言环境的语言库，翻译页面
+	jQuery.i18n.properties({
+	  	 name : 'common', //资源文件名称,本页面只用到common.properties
+	  	 path : 'admin/i18n/', //资源文件路径
+	  	 mode : 'both', //用Map的方式使用资源文件中的值
+	       language : i18nLanguage,
+	       callback : function() {//加载成功后设置显示内容
+	             // 第一类：class未使用layui的框架；自己命名的i18n
+	             var insertEle = jQuery(".i18n"); // 获得所有id为i18n的元素
+	             insertEle.each(function() {  // 遍历insertEle，根据i18n元素的 name 获取语言库对应的内容写入
+	            	 jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
+	              });
+	             // 第二类：layui的logo
+	             var insertLogolEle = jQuery(".layui-logo"); // 获得所有id为i18n的元素
+	             insertLogolEle.each(function() {  // 遍历，根据i18n元素的 name 获取语言库对应的内容写入
+	            	 jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
+	              });
+	             // 第三类：layui的 layui-footer
+	             var insertfooterlEle = jQuery(".footer"); // 获得所有id为i18n的元素
+	             insertfooterlEle.each(function() {  // 遍历，根据i18n元素的 name 获取语言库对应的内容写入
+	            	 jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
+	              });
+	     }
+	  
+	  });
+
 	/**
 	 * 获取报警数量提示
 	 * @returns
@@ -130,5 +155,7 @@
 	setInterval(AjaxGetAlarmTipsRequest,1000*5);  //每隔5秒刷新一下报警的提示数字
 	
 	</script>
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath }/admin/js/home.js"></script>
 </body>
 </html>

@@ -219,11 +219,11 @@ public interface UserService {
 	 * 分组广播lux调光（wifi无线调光器）
 	 * @param userid
 	 * @param groupid
-	 * @param luxParam
+	 * @param dimParam (pwmdim、autoluxdim)
 	 * @param cmd
 	 * @return
 	 */
-	int groupWriteLuxDimCmd(int userid, int groupid, int luxParam,String Cmd);
+	int groupWriteLuxDimCmd(int userid, int groupid, int dimParam,String Cmd);
 	/**
 	 * 根据用户id查询用户下的所有策略，返回map集合；
 	 * map集合中包含：镇流器策略集合、led策略集合、wifi无线调光器策略集合
