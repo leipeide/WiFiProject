@@ -34,27 +34,6 @@
 /*  border:1px solid #00695F; */
 }
 
-/* .bodyDiv{ 
-	margin-top:10px;
-	padding-buttom:5px;
- 	border:5px solid #95E75D; 
-}
-.colorControlDiv{
-	padding-top:5px;
-	height:60px;
- 	border:1px solid #00695F; 
-}
-.colorControlSlide{
-	padding-top:33px;
-	width:120px;
- 	margin-left:120px; 
- 	border:5px solid #000;  
-}
-.submitDiv{
-	padding-top:70px;
-	margin-left:150px;
-    border:1px solid #C01C1C;   
-}*/
 </style>
 </head>
 <body>
@@ -78,22 +57,6 @@
 			<a class="layui-btn layui-btn-sm" onclick="submitToning('${pageContext.request.contextPath }/ledNodeToningServlet',${node.id})">
 				<font class="i18n" name="Lsubmit"></font></a>
 		</div>
-<!-- 	<div class="bodyDiv">
-		<div class="colorControlDiv">
-			<div class="layui-form-item">
-				<label class="i18n" name="MoveSlider" style="width:180px;margin-left:20%;"></label>
-				<div id="colorControlSlide" class="colorControlSlide"></div>
-				<label class="RedSpan" name="color-red" style="float:left;margin-left:135px;margin-top:12px;"></label>
-				<label class="BlueSpan" name="color-blue" style="float:left;margin-left:45px;margin-top:12px;"></label>
-			</div>
-		</div>
-		<div class="submitDiv">
-			<button class="layui-btn layui-btn-sm" 
-				onclick="submitToning('${pageContext.request.contextPath }/nodeInGroupToningServlet',${node.id})">
-				<font class="i18n" name="Lsubmit"></font>	
-			</button>
-		</div>
-	</div> -->
 	</from>
 	<!-- jquery.min.js与	jquery.i18n.properties.js是i18n国际化需要的插件 -->
 	<script type="text/javascript"

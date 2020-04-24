@@ -58,6 +58,5 @@ public interface GroupNodeDao{
 	 */
 	public GroupNode selectNodeByUseridAndMac(int userid, String mac)throws Exception;
 	
-	
 
 }

@@ -15,7 +15,14 @@
 	/* 	border:3px solid #00695F;     */
 	height: 40px;
 }
-
+.functionDiv2 {
+	/* 	border:3px solid #00695F;     */
+	height: 40px;
+}
+.functionDiv3 {
+	/* 	border:3px solid #00695F;     */
+	height: 40px;
+}
 .addGroupDiv1 {
 	float: left;
 }
@@ -886,7 +893,7 @@
 		 }
 		 
 		//8.向单个led分组表格内插入led分组下的节点数据
-		 function IntoLedGroupNodeTable(groupId){
+		 function IntoLedGroupNodeTable(groupId){  
 			 jQuery.ajax({
 				  type:"post",
 		          url:"${pageContext.request.contextPath}/getGroupNodesServlet",

@@ -29,18 +29,10 @@ public class AlarmDaoImpl implements AlarmDao{
 
 	@Override
 	public int insertUnconnectAlarm(Alarm alarm) throws Exception {
-		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
-	///*	
+		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());	
 		return qr.update(
 				"INSERT INTO alarm (`userid`, `mac`, `type`, `power`, `temperature`, `date`) VALUES (?, ?, ?, ?, ?, ?)",
 				alarm.getUserid(), alarm.getMac(), alarm.getType(), alarm.getPower(), alarm.getTemperature(), alarm.getDate());
-	//*/
-	/*
-	
-		return qr.update(
-				"INSERT INTO `wifitest`.`alarm` (`userid`, `mac`, `type`, `power`, `temperature`, `date`) VALUES (?, ?, ?, ?, ?, ?)",
-				alarm.getUserid(), alarm.getMac(), alarm.getType(), alarm.getPower(), alarm.getTemperature(), alarm.getDate());
-	*/
 	}
 
 	@Override 

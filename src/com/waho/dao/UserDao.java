@@ -37,4 +37,27 @@ public interface UserDao {
      * @return
      */
 	public int updateUserPasswordByPassword(User user)throws Exception;
+	/**
+	 * 根据邮箱查找用户
+	 * @param email
+	 * @return
+	 * @throws Exception
+	 */
+	public User selectByEmail(String email)throws Exception;
+	/**
+	 * 更新用户获取验证码操作次数和验证码
+	 * @param admin
+	 * @throws Exception
+	 */
+	public void updateVerCodeAndOperateNumByPrimaryKey(User admin)throws Exception;
+	/**
+	 * 设置用户密码
+	 * @param id
+	 * @param password
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean updateUserPasswordById(int id, String password)throws Exception;
+
+	public void clearVercodeAndOpreateNum(String verCode, int operateNum)throws Exception;
 }

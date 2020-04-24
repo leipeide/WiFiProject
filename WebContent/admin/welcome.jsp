@@ -120,7 +120,7 @@
 					</tbody>
 				</table>
 			</div>
-			<!-- 2.Tab驱动器区域 -->
+			<!-- 2.led驱动器区域 -->
 			<div class="layui-tab-item" id="ledDriver_table">
 				<!-- 为美观，表格风格设置为sm -->
 				<table class="layui-table" lay-size="sm">

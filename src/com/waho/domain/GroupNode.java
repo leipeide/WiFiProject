@@ -43,6 +43,7 @@ public class GroupNode {
 	public void setMac(String mac) {
 		this.mac = mac;
 	}
+	
 	public String getParam1() {
 		return param1;
 	}

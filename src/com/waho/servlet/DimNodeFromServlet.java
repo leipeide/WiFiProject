@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.waho.domain.Node;
+import com.waho.service.UserService;
+import com.waho.service.impl.UserServiceImpl;
+
 /**
  * Servlet implementation class DimNodeFromServlet
  */
@@ -31,10 +35,16 @@ public class DimNodeFromServlet extends HttpServlet {
 		//1.获取参数
 		String nodeid = request.getParameter("nodeid");
 		String i18nLanguageStr = request.getParameter("i18nLanguage");
-		//2.分发转向
-		request.setAttribute("nodeid", nodeid);
-		request.setAttribute("i18nLanguage", i18nLanguageStr);
-		request.getRequestDispatcher("/admin/dimNodeForm.jsp").forward(request, response);
+		//2.处理业务逻辑
+		UserService us = new UserServiceImpl();
+		Node node = new Node();
+		node = us.getNodeByIdString(nodeid);
+		if(node != null) {
+			//3.分发转向
+			request.setAttribute("nodeObj", node);
+			request.setAttribute("i18nLanguage", i18nLanguageStr);
+			request.getRequestDispatcher("/admin/dimNodeForm.jsp").forward(request, response);
+		}
 	}
 
 	/**

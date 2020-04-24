@@ -28,8 +28,10 @@ public class GroupNodeDaoImpl implements GroupNodeDao{
 	@Override
 	public int insertNodeToGroupByGroupid(GroupNode groupNode) throws Exception {
 		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
-		return qr.update("INSERT INTO group_node (`groupid`, `userid`, `mac`, `param1`, `param2`, `param3`, `param4`) VALUES (?,?,?,?,?,?,?)", groupNode.getGroupid(),groupNode.getUserid(),groupNode.getMac(),groupNode.getParam1(),groupNode.getParam2(),groupNode.getParam3(),groupNode.getParam4());	
-	//	return qr.update("INSERT INTO `wifitest`.`group_node` (`groupid`, `userid`, `mac`, `param1`, `param2`, `param3`, `param4`) VALUES (?,?,?,?,?,?,?)", groupNode.getGroupid(),groupNode.getUserid(),groupNode.getMac(),groupNode.getParam1(),groupNode.getParam2(),groupNode.getParam3(),groupNode.getParam4());	
+		return qr.update("INSERT INTO group_node (`groupid`, `userid`, `mac`, `param1`, `param2`, `param3`, `param4`) VALUES (?,?,?,?,?,?,?)",
+				groupNode.getGroupid(),groupNode.getUserid(),groupNode.getMac(),
+				groupNode.getParam1(),groupNode.getParam2(),groupNode.getParam3(),
+				groupNode.getParam4());	
 	
 	}
 
@@ -57,6 +59,8 @@ public class GroupNodeDaoImpl implements GroupNodeDao{
 		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
 		return qr.query("select * from group_node where mac=? and userid=?", new BeanHandler<>(GroupNode.class), mac, userid);
 	}
+
+	
 	
 	
 

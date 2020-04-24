@@ -21,6 +21,14 @@ public class User {
 	 * 手机
 	 */
 	private String phone;
+	/**
+	 * 验证码，用于客户找回密码，6位数的随机数
+	 */
+	private String verCode;
+	/**
+	 * 操作次数，用户当天操作邮箱找回获取验证码的次数
+	 */
+	private int operateNum;
 	
 	public int getId() {
 		return id;
@@ -52,10 +60,23 @@ public class User {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+	public String getVerCode() {
+		return verCode;
+	}
+	public void setVerCode(String verCode) {
+		this.verCode = verCode;
+	}
+	public int getOperateNum() {
+		return operateNum;
+	}
+	public void setOperateNum(int operateNum) {
+		this.operateNum = operateNum;
+	}
+	
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", phone="
-				+ phone + "]";
+				+ phone + ", verCode=" + verCode + ", operateNum=" + operateNum + "]";
 	}
 	
 	

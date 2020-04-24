@@ -46,9 +46,10 @@ public interface UserService {
 	 * @param username
 	 * @param password
 	 * @param email
+	 * @param phone 
 	 * @return
 	 */
-	Boolean userRegister(String username, String password, String email);
+	Boolean userRegister(String username, String password, String email, String phone);
 
 	/**
 	 * 节点重命名，成功返回true，失败返回false
@@ -263,7 +264,7 @@ public interface UserService {
 	 */
 	int ployRename(int userid, int ployid, String ployName);
 	/**
-	 * 根据用户id 和分组id查询分组
+	 * 根据用户id 和分组id查询分组 ，多处使用
 	 * @param parseInt
 	 * @param parseInt2
 	 * @return
@@ -302,7 +303,33 @@ public interface UserService {
 	 */
 	boolean addPloyOperateOfDim(int userid, int ployid, int hours, int minutes, Date startDate, Date endDate,
 			int value);
-	
+	/**
+	 * 向wifi策略内添加自动调光操作
+	 * @param userid
+	 * @param ployid
+	 * @param hours
+	 * @param minutes
+	 * @param startDate
+	 * @param endDate
+	 * @param value
+	 * @return
+	 */
+	boolean addPloyOperateOfAutoDim(int userid, int ployid, int hours, int minutes, Date startDate, Date endDate,
+			int value);
+	/**
+	 * 向wifi策略内添加wifi无线调光器pwm调光
+	 * @param userid
+	 * @param ployid
+	 * @param hours
+	 * @param minutes
+	 * @param startDate
+	 * @param endDate
+	 * @param value
+	 * @return
+	 */
+	boolean addPloyOperateOfWifiPwmDim(int userid, int ployid, int hours, int minutes, Date startDate, Date endDate,
+			int value);
+
 	/**
 	 * 向策略内添加调色操作
 	 * @param userid
@@ -404,6 +431,26 @@ public interface UserService {
 	 * @return
 	 */
 	Boolean changePloyGroup(int ployid, int groupid);
+	/**
+	 * 发送验证码
+	 * @param email
+	 * @return
+	 */
+	Object sendVerificationCodeToEmail(String email);
+	/**
+	 * 验证验证码
+	 * @param email
+	 * @param verCode
+	 * @return
+	 */
+	Object findPasswordByVercode(String email, String verCode);
+	/**
+	 * 设置新的密码
+	 * @param userid
+	 * @param newPassword
+	 * @return
+	 */
+	boolean userSetNewPassword(int userid, String newPassword);
 	
 
 

@@ -338,10 +338,11 @@ public class Node {
 		Node other = (Node) obj;
 		if (colorPrecentage != other.colorPrecentage)
 			return false;
-		if (groupState != other.groupState)
+	/*	if (groupState != other.groupState)
 			return false;
 		if (Float.floatToIntBits(humidity) != Float.floatToIntBits(other.humidity))
 			return false;
+			*/
 		if (id != other.id)
 			return false;
 		if (lux != other.lux)

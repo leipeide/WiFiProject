@@ -33,7 +33,7 @@ public class PloyOperate {
 	 */
 	private int minutes;
 	/**
-	 * 策略操作的类型：开关灯设置为1；调光设置为2；调色设置为3
+	 * 策略操作的类型：开关灯设置为1；调光设置为2；调色设置为3；wifi自动调光设置为4; wifi无线调光器pwm调光设置为5
 	 */
 	private int operateType;
 	/**
@@ -47,6 +47,9 @@ public class PloyOperate {
 	private int operateParam;
 	/**
 	 * 策略操作的执行标志位：1已执行该操作，0未执行该操作
+	 * 弃用：由于wifi系统采用的是webSocket连接的方式，
+	 * 一个节点连接一个webSocket；
+	 * 若其中一个节点执行了策略操作，就将策略操作设置成了已执行状态，那么策略绑定分组内的其他节点则无法实现定时广播
 	 */
 	private int state;
 	/**

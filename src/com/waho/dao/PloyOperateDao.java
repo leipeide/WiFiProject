@@ -37,5 +37,11 @@ public interface PloyOperateDao {
 	 * @throws Exception
 	 */
 	int deletePloyOperateByid(int operateId)throws Exception;
+	/**
+	 * 清除所有策略操作的标志位，置为0
+	 * @param state
+	 * @throws Exception
+	 */
+	void clearPloyOperateState(int state)throws Exception;
 
 }

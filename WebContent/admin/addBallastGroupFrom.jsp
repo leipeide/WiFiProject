@@ -12,7 +12,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-<%-- 	<form class="layui-form" action="${pageContext.request.contextPath }/addBallastGroupServlet?userid=${userid}" method="post"> --%>
 		<form class="layui-form">
 		<!-- 隐藏标签，在页面中传递系统当前语言环境 -->
 		<input type="hidden" id="hiddenLan" value=${i18nLanguage }>

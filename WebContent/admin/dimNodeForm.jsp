@@ -12,14 +12,27 @@
 </head>
 <body class="layui-layout-body">
 	<form class="layui-form" action="" method="">
-		<input type="hidden" id="nodeid" name="nodeid" value="${nodeid }">
+		<input type="hidden" id="nodeid" name="nodeid" value="${nodeObj.id}">
 		<!-- 用于储存语言类型,在正在项目中传递 -->
 		<input type="hidden" id="hiddenLan" value="${i18nLanguage}">
 		<div class="layui-form-item" style="margin-top:10px;">
 			<label class="i18n" style="width:130px;margin-left:25px;" name="DimPara"></label>
 			<div class="layui-input-inline" style="width:130px;margin-left:60px;margin-top:10px;">
-				<input type="text" id="text1" name="percentage" placeholder="0-100" 
-						autocomplete="off"  required lay-verify="required" class="layui-input" onchange="percentCheck(this)">
+				<!-- 两种类型的节点调光范围不一样，用户if进行判断，进入不同调光范围的input -->
+				<c:set var="nodeType" value="${nodeObj.type}"/>
+					<!-- 镇流器类型节点调光范围是50-100 -->
+  					<c:if test="${nodeType < 11}"> 
+						<input type="text" id="text1" name="percentage" placeholder="50-100" 
+							autocomplete="off"  required lay-verify="required" class="layui-input" 
+							onchange="halfpercentCheck(this)">
+					</c:if>
+					<c:if test="${nodeType >= 11}"> 
+						<c:if test="${nodeType < 21}"> 
+							<input type="text" id="text2" name="percentage" placeholder="0-100" 
+							autocomplete="off"  required lay-verify="required" class="layui-input" 
+							onchange="percentCheck(this)">
+						</c:if>
+					</c:if>
 			</div>
 		</div>			
 		<div class="layui-form-item" style="margin-left:57px;">
@@ -34,8 +47,9 @@
  	<script type="text/javascript"
  		src="${pageContext.request.contextPath }/admin/js/jquery.i18n.properties.js"></script>
 	<script>
-		//1.获取id为hiddenLan的value值，i18nLanguage为全局变量，是当前系统的语言环境
-		var i18nLanguage = jQuery("#hiddenLan").val(); 
+		//1.全局变量
+		var i18nLanguage = jQuery("#hiddenLan").val();  //获取id为hiddenLan的value值，是当前系统的语言环境
+		var DimPercentage = ""; //全局变量，调光参数百分比
 		
 		//2.加载layui表单模块
 		layui.use('form', function() {
@@ -58,28 +72,38 @@
 		     	}
 		  });
 		
-		
-		//4.控制设置调光pwm输入框调光范围
+		//4.控制设置调光pwm输入框调光范围0-100
 		function percentCheck(obj){
-			var val = document.getElementById("text1").value;
+			var val = document.getElementById("text2").value;
 			if(val<0){
 				obj.value = 0;
 			}if(val>100){
 				obj.value = 100;
 			}
+			DimPercentage = document.getElementById("text2").value;
 		}
 		
-		//5.提交函数
+		//5.控制设置调光范围PWM 50-100
+		function halfpercentCheck(obj){
+			var val = document.getElementById("text1").value;
+			if(val<50){
+				obj.value = 50;
+			}if(val>100){
+				obj.value = 100;
+			}
+			DimPercentage = document.getElementById("text1").value;	
+		}
+		
+		//6.提交函数
 		function submitFunction(url){
 			var nodeId = jQuery("#nodeid").val(); //节点id
-			var text1 = jQuery("#text1").val(); //调光百分比
-			if(text1 != ""){
+			if(DimPercentage != ""){
 				jQuery.ajax({
 					  type:"post",
 			          url:url,
 			          data:{
 			            nodeid: nodeId,
-			            percentage:text1,
+			            percentage:DimPercentage ,
 			          },
 			          async : true,
 			          datatype: "json",

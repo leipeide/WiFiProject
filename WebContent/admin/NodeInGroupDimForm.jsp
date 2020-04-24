@@ -17,14 +17,27 @@
 		<div class="layui-form-item" style="margin-top:10px;">
 			<label class="i18n" style="width:130px;margin-left:25px;" name="DimPara"></label>
 			<div class="layui-input-block" style="width:130px;margin-left:60px;margin-top:10px;">
-				<input id="text1" type="text" placeholder="0-100" autocomplete="off" 
-					required lay-verify="required" class="layui-input" onchange="percentCheck(this)">
+				<!-- 两种类型的节点调光范围不一样，用户if进行判断，进入不同调光范围的input -->
+				<c:set var="nodeType" value="${nodeObj.type}"/>
+					<!-- 镇流器类型节点调光范围是50-100 -->
+  					<c:if test="${nodeType < 11}"> 
+						<input type="text" id="text1" name="percentage" placeholder="50-100" 
+							autocomplete="off"  required lay-verify="required" class="layui-input" 
+							onchange="halfpercentCheck(this)">
+					</c:if>
+					<c:if test="${nodeType > 11}"> 
+						<c:if test="${nodeType < 21}"> 
+							<input id="text2" type="text" placeholder="0-100" autocomplete="off" 
+							 required lay-verify="required" class="layui-input" 
+						  	 onchange="percentCheck(this)">
+						</c:if>
+					</c:if>
 			</div>
 		</div>
 			<!-- 注意：此处不能使用button,因为form表单button提交后，会主动刷新页面，此时i18nLanguage无法获取 -->
 			<div class="layui-form-item" style="margin-left:60px;">
 				<a class="layui-btn layui-btn-sm" 
-					onclick="submitFunction('${pageContext.request.contextPath}/nodeInGroupPwmDimServlet',${nodeid })">
+					onclick="submitFunction('${pageContext.request.contextPath}/nodeInGroupPwmDimServlet',${nodeObj.id })">
 					<font class="i18n" name="Lsubmit"></font>
 				</a>					
 		</div>
@@ -40,8 +53,9 @@
 			
 		});
 	
-		//2.获取id为hiddenLan的value值，i18nLanguage为全局变量，是当前系统的语言环境
-		var i18nLanguage = jQuery("#hiddenLan").val();	
+		//2.全局变量
+		var i18nLanguage = jQuery("#hiddenLan").val();	//获取id为hiddenLan的value值，是当前系统的语言环境
+		var DimPercentage = ""; //全局变量，调光参数百分比
 		
 		//3.重要：这里需要进行i18n的翻译；进入相应语言环境的语言库，翻译页面
 		jQuery.i18n.properties({
@@ -58,26 +72,38 @@
 		     	}
 		  });
 		
-		//4.核对调光范围
-		function percentCheck(obj){
+		//4.核对镇流器调光范围50-100
+		function halfpercentCheck(obj){
 			var val = document.getElementById("text1").value;
+			if(val<50){
+				obj.value = 50;
+			}if(val>100){
+				obj.value = 100;
+			}
+			DimPercentage = jQuery("#text1").val(); //调光百分比
+		}
+		
+		//5.核对调光范围
+		function percentCheck(obj){
+			var val = document.getElementById("text2").value;
 			if(val<0){
 				obj.value = 0;
 			}if(val>100){
 				obj.value = 100;
 			}
+			DimPercentage = jQuery("#text2").val(); //调光百分比
 		}
 		
-		//5.提交函数
+		//6.提交函数
 		function submitFunction(url,nodeId){
-			var text1 = jQuery("#text1").val(); //调光百分比
-			if(text1 != ""){
+			//var text1 = jQuery("#text1").val(); //调光百分比
+			if(DimPercentage != ""){
 				jQuery.ajax({
 					  type:"post",
 			          url:url,
 			          data:{
 			            nodeid: nodeId,
-			            percentage:text1,
+			            percentage:DimPercentage,
 			          },
 			          async : true,
 			          datatype: "String",

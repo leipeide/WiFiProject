@@ -1,9 +1,8 @@
 package com.waho.websocket;
 
 import java.io.IOException;
-import java.util.Calendar;
+import java.io.PrintWriter;
 import java.util.Date;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -15,22 +14,12 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSON;
 import com.waho.dao.AlarmDao;
-import com.waho.dao.GroupNodeDao;
 import com.waho.dao.NodeDao;
-import com.waho.dao.PloyDao;
-import com.waho.dao.PloyOperateDao;
 import com.waho.dao.impl.AlarmDaoImpl;
-import com.waho.dao.impl.GroupNodeDaoImpl;
 import com.waho.dao.impl.NodeDaoImpl;
-import com.waho.dao.impl.PloyDaoImpl;
-import com.waho.dao.impl.PloyOperateDaoImpl;
 import com.waho.domain.Alarm;
-import com.waho.domain.GroupNode;
 import com.waho.domain.Message;
 import com.waho.domain.Node;
-import com.waho.domain.Ploy;
-import com.waho.domain.PloyOperate;
-import com.waho.domain.User;
 import com.waho.service.NodeService;
 import com.waho.service.impl.NodeServiceImpl;
 
@@ -67,35 +56,38 @@ public class WebSocketServlet {
 
 	public WebSocketServlet() {
 		super();
-		//30s无心跳包断开连接
+		//1.30s无心跳包断开连接
 		if (WebSocketServlet.timer == null) {
 			WebSocketServlet.timer = new Timer();
 			WebSocketServlet.timer.schedule(new TimerTask() {
 				@Override
 				public void run() {
+					
 					// 分两次循环进行操作，因为不确定调用session的close方法后，从set集合删除操作何时进行的。防止出现遍历过程中set发生变化，遍历越界。
 					for (WebSocketServlet servlet : webSocketSet) {
 						servlet.timeCount += 3;
 					}
 					for (WebSocketServlet servlet : webSocketSet) {
-						//1.执行策略广播,每隔3秒轮询一次
+						//1.1.执行策略广播,每隔3秒轮询一次
 						PloyBroadcastCmdHandler.SendPloyBroadcastCmd(servlet);
+						
 						if (servlet.timeCount > TIMEOUT) {
+							//1.3节点断开连接报警
 							try {
-								//2.节点断开连接报警
 								if(servlet.getId() != 0) {
 									NodeDao nodeDao = new NodeDaoImpl();
 									AlarmDao alarmDao = new AlarmDaoImpl();
 									Node node = nodeDao.selectNodeById(servlet.getId());
-									int type = 2;//报警信息中type为2是节点与服务器断开连接
+								    //int type = 2;//报警信息中type为2是节点与服务器断开连接
 									Date date = new Date();
 									//查询节点报警类型为2的报警记录是否存在
-									Alarm alarmRecord = alarmDao.selectAlarmByUseridAndMacAndType(node.getUserid(),node.getMac(),type);
+									Alarm alarmRecord = alarmDao.selectAlarmByUseridAndMacAndType(node.getUserid(),
+											node.getMac(),Alarm.ALARM_DISCONNECT);
 									if(alarmRecord == null) {//若不存在，插入新的记录
 										Alarm alarm = new Alarm();
 										alarm.setDate(date);
 										alarm.setMac(node.getMac());
-										alarm.setType(2);
+										alarm.setType(alarm.ALARM_DISCONNECT);//报警信息中type为2是节点与服务器断开连接
 										alarm.setUserid(node.getUserid());
 										alarmDao.insertUnconnectAlarm(alarm);
 									}else {//若存在，更新该记录的报警信息
@@ -103,24 +95,29 @@ public class WebSocketServlet {
 									}
 									
 								}
-								//3.30秒内未收到客户端的心跳包，websocket主动断开与客户端的连接
-								//用于日志提示
-								//logger.info("timeCount = " + timeCount + "超时关闭");
+								//1.4 30秒内未收到客户端的心跳包，websocket主动断开与客户端的连接
 								servlet.session.close(); //session 关闭以后直接调用onClose方法，webScoket失去连接
+								
 								
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 						} 
+						
+						
 					}
 					
 				}
 				
 			}, 3000, 3000);
+			
+			
+			
+			
 		}
-		
-		
 	}
+	
+	
 	
 	
 	/**
@@ -134,7 +131,7 @@ public class WebSocketServlet {
 		this.session = session;
 		webSocketSet.add(this); // 加入set中
 		addOnlineCount(); // 在线数加1
-		System.out.println("有新连接加入！当前在线人数为" + getOnlineCount());
+	//	System.out.println("有新连接加入！当前在线人数为" + getOnlineCount());
 		logger.info("有新连接加入！当前在线人数为" + getOnlineCount());
 		
 	}
@@ -146,7 +143,6 @@ public class WebSocketServlet {
 	public void onClose() {
 		webSocketSet.remove(this); // 从set中删除
 		subOnlineCount(); // 在线数减1
-		System.out.println("有一连接关闭！当前在线人数为" + getOnlineCount());
 		logger.info("有一连接关闭！当前在线人数为" + getOnlineCount());
 		if (this.getId() != 0) {
 			NodeService nodeService = new NodeServiceImpl();
@@ -164,7 +160,6 @@ public class WebSocketServlet {
 	 */
 	@OnMessage
 	public void onMessage(String message, Session session) {
-		System.out.println("来自客户端的消息:" + message);
 		Message obj = JSON.parseObject(message, Message.class); //将字符串转为json对象
 		logger.info("Node to" + obj.getMac() + ":" + message);
 		WebSocketRequestHandler.RequestHandle(message, this);
@@ -179,7 +174,6 @@ public class WebSocketServlet {
 	 */
 	@OnError
 	public void onError(Session session, Throwable error) {
-		System.out.println("发生错误");
 		logger.info("发生错误");
 		error.printStackTrace();
 	}

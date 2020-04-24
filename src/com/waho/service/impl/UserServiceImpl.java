@@ -1,6 +1,5 @@
 package com.waho.service.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -8,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -18,6 +18,7 @@ import com.waho.dao.GroupNodeDao;
 import com.waho.dao.NodeDao;
 import com.waho.dao.PloyDao;
 import com.waho.dao.PloyOperateDao;
+import com.waho.dao.UserCmdRecordDao;
 import com.waho.dao.UserDao;
 import com.waho.dao.impl.AlarmDaoImpl;
 import com.waho.dao.impl.GroupDaoImpl;
@@ -25,6 +26,7 @@ import com.waho.dao.impl.GroupNodeDaoImpl;
 import com.waho.dao.impl.NodeDaoImpl;
 import com.waho.dao.impl.PloyDaoImpl;
 import com.waho.dao.impl.PloyOperateDaoImpl;
+import com.waho.dao.impl.UserCmdRecordDaoImpl;
 import com.waho.dao.impl.UserDaoImpl;
 import com.waho.domain.Alarm;
 import com.waho.domain.Group;
@@ -34,8 +36,10 @@ import com.waho.domain.Node;
 import com.waho.domain.NodeTreeModel;
 import com.waho.domain.Ploy;
 import com.waho.domain.PloyOperate;
+import com.waho.domain.SendJMail;
 import com.waho.domain.TreeChildModel;
 import com.waho.domain.User;
+import com.waho.domain.UserCmdRecord;
 import com.waho.service.NodeService;
 import com.waho.service.UserService;
 import com.waho.util.MD5Utils;
@@ -89,7 +93,7 @@ public class UserServiceImpl implements UserService {
 		return resultMap;
 	}
 
-	@Override
+	@Override //该函数多处使用
 	public Node getNodeByIdString(String nodeid) {
 		int id;
 		try {
@@ -143,9 +147,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Boolean userRegister(String username, String password, String email) {
-		if (username != null && "".equals(username) == false && password != null && "".equals(password) == false
-				&& email != null && "".equals(email) == false) {
+	public Boolean userRegister(String username, String password, String email, String phone) {
+		if (username != null && "".equals(username) == false 
+				&& password != null && "".equals(password) == false
+				&& email != null && "".equals(email) == false 
+				&& phone != null && "".equals(phone) == false) {
 			UserDao userDao = new UserDaoImpl();
 			User user;
 			try {
@@ -155,6 +161,8 @@ public class UserServiceImpl implements UserService {
 					user.setUsername(username);
 					user.setPassword(MD5Utils.MD5Encode(password, "utf-8"));
 					user.setEmail(email);
+					user.setPhone(phone);
+					user.setOperateNum(0);
 
 					int result = userDao.insert(user);
 					if (result > 0) {
@@ -664,61 +672,77 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public int groupBroadcastDimByPwm(int userid, int groupid, int dimValue) {
-			NodeDao nodeDao = new NodeDaoImpl();
-			GroupNodeDao gnd = new GroupNodeDaoImpl();
-			GroupDao groupDao = new GroupDaoImpl();
-			List<Node> nodeList = null;
-			int count = 0;
-			//1.避免调光占空比范围超出100%
-			if(dimValue > 100) {
-				dimValue = 100;
-			}
+		NodeDao nodeDao = new NodeDaoImpl();
+		GroupNodeDao gnd = new GroupNodeDaoImpl();
+		GroupDao groupDao = new GroupDaoImpl();
+		UserCmdRecord userCmdRecord = new UserCmdRecord();
+		UserCmdRecordDao userCmdRecordDao = new UserCmdRecordDaoImpl();
 			
-			try {
-				//2.获取该分组下的节点集合
-				List<GroupNode> groupNodeList = gnd.selectNodesByUseridAndGroupid(userid,groupid);
-				if(groupNodeList == null || groupNodeList.size() ==0) {
+		List<Node> nodeList = null;
+		int count = 0;
+		//1.避免调光占空比范围超出100%
+		if(dimValue > 100) {
+			dimValue = 100;
+		}
+			
+		try {
+			//2.获取该分组下的节点集合
+			List<GroupNode> groupNodeList = gnd.selectNodesByUseridAndGroupid(userid,groupid);
+			if(groupNodeList == null || groupNodeList.size() ==0) {
 
-				}else {//分组下存在节点
-					for(GroupNode obj : groupNodeList) {
-						Node node = nodeDao.selectOnlineNodesByUseridAndMac(obj.getMac(),userid);
-						if(node != null) {
-							for (WebSocketServlet socket : WebSocketServlet.webSocketSet) {
-								if (socket.getId() == node.getId()) {
-									Message cmd = new Message();
-									cmd.setMsg("request");
-									cmd.setCmd("write");
-									cmd.setPrecentage(dimValue);
-									cmd.setSwitchState(node.getSwitchState());
-									String cmdStr = JSON.toJSONString(cmd);
-									socket.sendMessage(cmdStr);
-									count++;
-									logger.info("service to " + node.getMac() + ":" + cmdStr);
+			}else {//分组下存在节点
+				for(GroupNode obj : groupNodeList) {
+					Node node = nodeDao.selectOnlineNodesByUseridAndMac(obj.getMac(),userid);
+					if(node != null) {
+						for (WebSocketServlet socket : WebSocketServlet.webSocketSet) {
+							if (socket.getId() == node.getId()) {
+								Message cmd = new Message();
+								cmd.setMsg("request");
+								cmd.setCmd("write");
+								cmd.setPrecentage(dimValue);
+								cmd.setSwitchState(node.getSwitchState());
+								String cmdStr = JSON.toJSONString(cmd);
+								socket.sendMessage(cmdStr);
+								count++;
+								logger.info("service to " + node.getMac() + ":" + cmdStr);
 								/*	//记录此次节点和分组的操作类型lastOperateType;
-									String operateType = "dim";
-									//nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
-									groupDao.updateLastOperateTypeByGroupid(operateType,groupid);
+								String operateType = "dim";
+								//nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
+								groupDao.updateLastOperateTypeByGroupid(operateType,groupid);
 							    */
-								}
+								Date date = new Date();
+								userCmdRecord.setDate(date);
+								userCmdRecord.setCmdType(UserCmdRecord.CMD_PWM);
+								userCmdRecord.setMac(node.getMac());
+								userCmdRecord.setParamter(Integer.toString(dimValue));
+								userCmdRecord.setUserid(node.getUserid());
+								userCmdRecordDao.insertUserCmdRecord(userCmdRecord);
+								
 							}
 						}
 					}
 				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return count;
 	}
 
 	@Override
 	public int groupBroadcastSwitchNode(int userid, int groupid, int switchState, int percentage) {
 		Node node = new Node();
+		GroupDao gd = new GroupDaoImpl();
 		NodeDao nodeDao = new NodeDaoImpl();
 		GroupNodeDao gnd = new GroupNodeDaoImpl();
-		GroupDao gd = new GroupDaoImpl();
+		UserCmdRecord userCmdRecord = new UserCmdRecord();
+		UserCmdRecordDao userCmdRecordDao = new UserCmdRecordDaoImpl();
 		List<GroupNode> groupNodeList = null;
-		int count = 0;
+		int count = 0; //成功发送指令次数
+		int cmdType = 0; //用户指令类型初始化，默认为0，0没有相应类型的指令
+		
 		try {
 			
 			//1.获取该分组下的所有节点
@@ -742,14 +766,25 @@ public class UserServiceImpl implements UserService {
 								logger.info("service to " + node.getMac() + ":" + cmdStr);
 								//4.记录此次节点与分组操作类型lastOperateType;
 								if(switchState == 1) {
+									cmdType = UserCmdRecord.CMD_OPEN;
 									String operateType = "open";
 									nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
 									gd.updateLastOperateTypeByGroupid(operateType,groupid);
 								}else {
+									cmdType = UserCmdRecord.CMD_CLOSE;
 									String operateType = "close";
 									nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
 									gd.updateLastOperateTypeByGroupid(operateType,groupid);
 								}
+								
+								//5.记录用户指令记录
+								Date date = new Date();
+								userCmdRecord.setDate(date);
+								userCmdRecord.setCmdType(cmdType);
+								userCmdRecord.setMac(node.getMac());
+								userCmdRecord.setParamter(Integer.toString(percentage)); 
+								userCmdRecord.setUserid(node.getUserid());
+								userCmdRecordDao.insertUserCmdRecord(userCmdRecord);
 								
 							}
 						}
@@ -769,12 +804,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public int writeGroupBroadcastToningCmd(int userid, int groupid, int tonPrecentage) {
-		GroupNodeDao gnd = new GroupNodeDaoImpl();
 		NodeDao nd = new NodeDaoImpl();
 		GroupDao groupDao = new GroupDaoImpl();
+		GroupNodeDao gnd = new GroupNodeDaoImpl();
+		UserCmdRecord userCmdRecord = new UserCmdRecord();
+		UserCmdRecordDao userCmdRecordDao = new UserCmdRecordDaoImpl();
 		List<GroupNode> list = null;
 		Node node = new Node();
 		int count = 0;
+		
 		try {
 			
 			list = gnd.selectNodesByUseridAndGroupid(userid, groupid);
@@ -797,6 +835,15 @@ public class UserServiceImpl implements UserService {
 								nd.updateLastOperateTypeByNodeid(operateType,node.getId());
 								groupDao.updateLastOperateTypeByGroupid(operateType,groupid);
 							*/
+								//5.记录用户指令记录
+								Date date = new Date();
+								userCmdRecord.setDate(date);
+								userCmdRecord.setCmdType(UserCmdRecord.CMD_TONING);
+								userCmdRecord.setMac(node.getMac());
+								userCmdRecord.setParamter(Integer.toString(tonPrecentage)); 
+								userCmdRecord.setUserid(node.getUserid());
+								userCmdRecordDao.insertUserCmdRecord(userCmdRecord);
+								
 							}
 						}
 					}
@@ -812,12 +859,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public int groupWriteLuxDimCmd(int userid, int groupid, int dimParam,String Cmd) {
+		UserCmdRecordDao userCmdRecordDao = new UserCmdRecordDaoImpl();
+		UserCmdRecord userCmdRecord = new UserCmdRecord();
 		GroupNodeDao gnd = new GroupNodeDaoImpl();
 		GroupDao groupDao = new GroupDaoImpl();
 		NodeDao nd = new NodeDaoImpl();
 		List<GroupNode> list = null;
 		Node node = new Node();
 		int count = 0;
+		int cmdType = 0; //用户指令初始化，默认为0，0不代表任何指令
+		
 		try {
 			
 			list = gnd.selectNodesByUseridAndGroupid(userid, groupid);
@@ -833,9 +884,11 @@ public class UserServiceImpl implements UserService {
 								if(Cmd.equals("autoluxdim")) { //自动调光指令
 									cmd.setLux(dimParam);
 									count++;
+									cmdType = UserCmdRecord.CMD_AUTOLUX;
 								}else if(Cmd.equals("pwmdim")) {
 									cmd.setPrecentage(dimParam);
 									count++;
+									cmdType = UserCmdRecord.CMD_PWM;
 								}else {
 									
 								}
@@ -846,6 +899,15 @@ public class UserServiceImpl implements UserService {
 								String operateType = "luxdim";
 								//nd.updateLastOperateTypeByNodeid(operateType,node.getId());
 								groupDao.updateLastOperateTypeByGroupid(operateType,groupid);
+								
+								//5.记录用户指令记录
+								Date date = new Date();
+								userCmdRecord.setDate(date);
+								userCmdRecord.setCmdType(cmdType);
+								userCmdRecord.setMac(node.getMac());
+								userCmdRecord.setParamter(Integer.toString(dimParam)); 
+								userCmdRecord.setUserid(node.getUserid());
+								userCmdRecordDao.insertUserCmdRecord(userCmdRecord);
 								
 							}
 						}
@@ -959,7 +1021,7 @@ public class UserServiceImpl implements UserService {
 		return result;
 	}
 
-	@Override
+	@Override //多处使用
 	public Group getGroupObjByUseridAndGroupid(int userid, int groupid) {
 		GroupDao groupDao = new GroupDaoImpl();
 		Group group = new Group();
@@ -1016,7 +1078,7 @@ public class UserServiceImpl implements UserService {
 			operate.setEndDate(endDate);
 			operate.setHours(hours);
 			operate.setMinutes(minutes);
-			//策略操作的类型：开关灯设置为1；调光设置为2；调色设置为3
+			//策略操作的类型：开关灯设置为1；调光设置为2；调色设置为3；wifi自动调光设置为4; wifi无线调光器pwm调光设置为5
 			operate.setOperateType(1);
 			operate.setOperateParam(value);
 			operate.setState(0);
@@ -1050,8 +1112,75 @@ public class UserServiceImpl implements UserService {
 			operate.setEndDate(endDate);
 			operate.setHours(hours);
 			operate.setMinutes(minutes);
-			//策略操作的类型：开关灯设置为1；调光设置为2；调色设置为3
+			//策略操作的类型：开关灯设置为1；调光设置为2；调色设置为3；wifi自动调光设置为4;wifi无线调光器pwm调光设置为5
 			operate.setOperateType(2); 
+			operate.setOperateParam(value);
+			int num = 0;
+			num = poDao.insertPloyOperate(operate);
+			if(num > 0) {
+				result = true;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return result ;
+	}
+ 
+	
+	@Override
+	public boolean addPloyOperateOfAutoDim(int userid, int ployid, int hours, int minutes, Date startDate, Date endDate,
+			int value) {
+		PloyOperateDao poDao = new PloyOperateDaoImpl();
+		PloyDao ployDao = new PloyDaoImpl();
+		Ploy ploy = new Ploy();
+		boolean result = false;
+		try {
+			ploy = ployDao.selectPloyByPloyidAndUserids(ployid,userid);
+			//创建ployOperate对象
+			PloyOperate operate = new PloyOperate(); 
+			operate.setPloyid(ployid);
+			operate.setPloyName(ploy.getPloyName());
+			operate.setStartDate(startDate);
+			operate.setEndDate(endDate);
+			operate.setHours(hours);
+			operate.setMinutes(minutes);
+			//策略操作的类型：开关灯设置为1；调光设置为2；调色设置为3；wifi自动调光设置为4; wifi无线调光器pwm调光设置为5
+			operate.setOperateType(4); 
+			operate.setOperateParam(value);
+			int num = 0;
+			num = poDao.insertPloyOperate(operate);
+			if(num > 0) {
+				result = true;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return result ;
+	}
+	
+	@Override
+	public boolean addPloyOperateOfWifiPwmDim(int userid, int ployid, int hours, int minutes, Date startDate,
+			Date endDate, int value) {
+		PloyOperateDao poDao = new PloyOperateDaoImpl();
+		PloyDao ployDao = new PloyDaoImpl();
+		Ploy ploy = new Ploy();
+		boolean result = false;
+		try {
+			ploy = ployDao.selectPloyByPloyidAndUserids(ployid,userid);
+			//创建ployOperate对象
+			PloyOperate operate = new PloyOperate(); 
+			operate.setPloyid(ployid);
+			operate.setPloyName(ploy.getPloyName());
+			operate.setStartDate(startDate);
+			operate.setEndDate(endDate);
+			operate.setHours(hours);
+			operate.setMinutes(minutes);
+			//策略操作的类型：开关灯设置为1；调光设置为2；调色设置为3；wifi自动调光设置为4; wifi无线调光器pwm调光设置为5
+			operate.setOperateType(5); 
 			operate.setOperateParam(value);
 			int num = 0;
 			num = poDao.insertPloyOperate(operate);
@@ -1069,7 +1198,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean addPloyOperateOfToning(int userid, int ployid, int hours, int minutes, Date startDate, Date endDate,
 			int value) {
-		System.out.println("value:"+value);
 		PloyOperateDao poDao = new PloyOperateDaoImpl();
 		PloyDao ployDao = new PloyDaoImpl();
 		Ploy ploy = new Ploy();
@@ -1084,7 +1212,7 @@ public class UserServiceImpl implements UserService {
 			operate.setEndDate(endDate);
 			operate.setHours(hours);
 			operate.setMinutes(minutes);
-			//策略操作的类型：开关灯设置为1；调光设置为2；调色设置为3
+			//策略操作的类型：开关灯设置为1；调光设置为2；调色设置为3；wifi自动调光设置为4; wifi无线调光器pwm调光设置为5
 			operate.setOperateType(3); 
 			operate.setOperateParam(value);
 			int num = 0;
@@ -1192,6 +1320,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean writeNodeToningCmd(int nodeid, int tonPercentage) {
+		//新建用户指令记录对象
+		UserCmdRecord  userCmdRecord = new UserCmdRecord(); 
+		UserCmdRecordDao userCmdRecordDao = new UserCmdRecordDaoImpl();
+		
 		try {
 			NodeDao nodeDao = new NodeDaoImpl();
 			Node node = nodeDao.selectNodeById(nodeid);
@@ -1201,15 +1333,24 @@ public class UserServiceImpl implements UserService {
 				// 调用websocket发送指令接口,一个节点一个websocket
 				for (WebSocketServlet socket : WebSocketServlet.webSocketSet){
 					if (socket.getId() == node.getId()) {
+						//1.发送指令
 						Message cmd = new Message();
 						cmd.setMsg("request");
 						cmd.setCmd("toning");
 						cmd.setColorPrecentage(tonPercentage);
 						String cmdStr = JSON.toJSONString(cmd);
-						socket.sendMessage(cmdStr);
+						socket.sendMessage(cmdStr); 
 						logger.info("service to " + node.getMac() + ":" + cmdStr);
+						//记录指令
+						Date date = new Date();
+						userCmdRecord.setDate(date);
+						userCmdRecord.setCmdType(UserCmdRecord.CMD_TONING);
+						userCmdRecord.setMac(node.getMac());
+						userCmdRecord.setParamter(Integer.toString(cmd.getColorPrecentage()));
+						userCmdRecord.setUserid(node.getUserid());
+						userCmdRecordDao.insertUserCmdRecord(userCmdRecord);
 						/*
-						 * //4.记录此次操作类型lastOperateType;
+						 * //记录此次操作类型lastOperateType;
 						String operateType = "toning";
 						nodeDao.updateLastOperateTypeByNodeid(operateType,node.getId());
 						*/
@@ -1461,6 +1602,140 @@ public class UserServiceImpl implements UserService {
 		}else {
 			return false;
 		}
+	}
+
+	
+	@Override
+	public Object sendVerificationCodeToEmail(String email) {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String error = ""; //用于返回前端的错误字段
+		User admin = null;
+		UserDao userDao = new UserDaoImpl();
+		//实例化一个发送邮件的对象
+		SendJMail mySendMail = new SendJMail();
+		
+	    //设置随机验证码
+		String verifyCode = "";
+		Random random = new Random();
+		for(int index = 0; index < 6; index++) {
+			verifyCode+=random.nextInt(10);
+		};
+		try {
+			
+			admin = userDao.selectByEmail(email);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		if(admin != null) { //用户存在 
+			if(admin.getOperateNum() == 0) {  //初次获取验证码	
+				//发送邮件
+				String emailMsg = 
+						"Dear user, you are in the process of password retrieval to obtain the verification code." + 
+					    "<br/>This verification code is " + verifyCode + ".If you do not operate yourself, please ignore it." +
+					    "<br/>（尊敬的用户，您正在进行密码找回获取验证码，此次验证码是"+verifyCode + "； 如非本人操作请忽略。）" ;
+				
+				boolean sendResult = mySendMail.SendMail(admin.getEmail(), emailMsg);
+				
+				//更新user数据库中的vercode和operate_num
+				admin.setVerCode(verifyCode);
+				if(sendResult) {
+					admin.setOperateNum(admin.getOperateNum() + 1); //多次获取验证码
+				}
+				try {
+					
+					userDao.updateVerCodeAndOperateNumByPrimaryKey(admin);
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//设置用户
+				result.put("User", admin);
+				
+			}else if(admin.getOperateNum() < 4 && admin.getOperateNum() > 0) { // 多次获取验证码
+				//发送邮件
+				String emailMsg = 
+					"Dear user, you are in the process of password retrieval to obtain the verification code." + 
+				    "<br/>This verification code is " + verifyCode + ".If you do not operate yourself, please ignore it." +
+				    "<br/>（尊敬的用户，您正在进行密码找回获取验证码，此次验证码是"+verifyCode + "； 如非本人操作请忽略。）" ;
+				boolean sendResult = mySendMail.SendMail(admin.getEmail(), emailMsg);
+				//更新user数据库中的vercode和operate_num
+				admin.setVerCode(verifyCode);
+				if(sendResult) {
+					admin.setOperateNum(admin.getOperateNum()+1); //多次获取验证码
+				}
+				try {
+		
+					userDao.updateVerCodeAndOperateNumByPrimaryKey(admin);
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//设置用户
+				result.put("User", admin);
+			}else { 
+			    error = "您今天的次数已超过4次，请明天再操作";
+					
+			}
+				
+		}else { //用户不存在
+		    error = "未查找到用户，该邮箱未注册用户";  //错误提示用于前端提示，不要轻易修改
+		}
+		
+		result.put("error", error);
+		return result;
+	}
+
+	@Override
+	public Object findPasswordByVercode(String email, String verCode) {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String error = ""; //用于返回前端的错误字段
+		User admin = null;
+		UserDao userDao = new UserDaoImpl();
+		
+		try {
+			admin = userDao.selectByEmail(email);
+			if(admin != null) {
+				if(admin.getVerCode().equals(verCode)) { 
+					result.put("user",admin);
+					
+				}else {
+					error = "验证码错误"; //错误提示用于前端提示，不要轻易修改
+				}
+			}else {
+				error = "未查找到用户，该邮箱未注册用户";  //错误提示用于前端提示，不要轻易修改
+				
+			}		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		result.put("error", error);
+		return result; 
+	}
+
+	@Override
+	public boolean userSetNewPassword(int id, String newPassword) {
+		UserDao userDao = new UserDaoImpl();
+		boolean result = false;
+		String password = MD5Utils.MD5Encode(newPassword, "utf-8");
+	
+		
+		try {
+			//设置新的密码
+			 result = userDao.updateUserPasswordById(id,password);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	
