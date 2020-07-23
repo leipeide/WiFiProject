@@ -46,14 +46,14 @@ public class LedNodeToningServlet extends HttpServlet {
 				 * 若修改，需要前后端统一
 				 */
 				response.getWriter().write(JSON.toJSONString("指令发送成功"));
-				//response.getWriter().write("指令发送成功");
+				
 			}else {
 				response.getWriter().write(JSON.toJSONString("节点离线或节点不存在"));
-				//response.getWriter().write("节点离线或节点不存在");
+				
 			}
 		}else {
 			response.getWriter().write(JSON.toJSONString("参数不完整"));
-			//response.getWriter().write("参数不完整");
+			
 		}
 		
 	}

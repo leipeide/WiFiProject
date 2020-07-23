@@ -20,14 +20,15 @@ html {
 	background-size: cover;
 }
 .main-form-div {
-	margin-top: 100px;
+	margin-top: 50px;
 }
 
 .main-form-body {
-	padding-top: 40px;
-	padding-left: 10%;
+	padding-top: 5%;
+	padding-left: 20%;
 	padding-right: 10%;
 	padding-bottom: 40px;
+/* 	border:1px solid #000;  */
 }
 .languageDiv{
 	margin-top:30px;
@@ -35,6 +36,25 @@ html {
 }
 .languageSelect{
 	margin-top:10px;
+}
+.usernameInput{ 
+	background: url('<%=request.getContextPath()%>/admin/img/蓝色用户.png')no-repeat;
+	background-size: 25px 25px;
+ 	background-position: 5px 4px; 
+ 	background-color: #ffffff;
+ 	padding:8px 10px 8px 40px; 
+	width:210px;
+	height:20px;
+}
+
+.passwordInput{ 
+	background: url('<%=request.getContextPath()%>/admin/img/蓝色密码.png')no-repeat;
+	background-size: 25px 25px;
+ 	background-position: 5px 4px; 
+ 	background-color: #ffffff;
+ 	padding:8px 10px 8px 40px; 
+	width:210px;
+	height:20px;
 }
 </style>
 </head>
@@ -60,26 +80,28 @@ html {
 						<!-- 用于储存语言类型,在正在项目中传递 -->
 						<input type="hidden" id="hiddenLan" name="i18nLanguage">
 						<div class="layui-form-item">
-							<label class="layui-form-label"  name="Lusername"></label>
 							<div class="layui-input-inline" style="width:220px;">
 								<input type="text" id="UserNameInput" name="username" selectname="usernamePlaceholder" selectattr="placeholder" 
-									autocomplete="off"  required lay-verify="required" class="layui-input">
+									autocomplete="off"  required lay-verify="required" class="usernameInput">
 							</div>
 						</div>
 						<div class="layui-form-item">
-							<label class="layui-form-label"  name="Lpassword"></label>
 							<div class="layui-input-inline" style="width:220px;">
 								<input type="password" id="PasswordInput" name="password" selectname="passwordPlaceholder" selectattr="placeholder" 
-									 autocomplete="off" required lay-verify="required" class="layui-input">
+									 autocomplete="off" required lay-verify="required" class="passwordInput">
 							</div>
 						</div>
+						
 						<div class="layui-form-item">
-							<div class="layui-input-block">
-								<button class="layui-btn" lay-submit lay-filter="loginFilter" 
-									style="margin-left:5px;" name="Llogin"></button>
-									 
-								<a class="layui-btn" name="Lregister" style="margin-left:62px;"
-									href="${pageContext.request.contextPath }/registerServlet" ></a>
+							<button style="width:263px;margin-left:0px;" class="layui-btn"
+								lay-submit lay-filter="loginFilter" name="Llogin"></button>
+							<div style="margin-top:20px;"> 
+								<a name="Lregister" class="i18n" 
+								    style="float:left;margin-left:30px;color:red"
+									href="${pageContext.request.contextPath }/registerServlet"></a>
+								<a class="i18n" name="LforgotPassword"
+									style="float:right;margin-right:60px;color:red"
+									href="${pageContext.request.contextPath }/forgetPasswordFormServlet"></a>
 							</div>
 						</div>
 					</form>
@@ -209,25 +231,31 @@ html {
 		               insertEle.each(function() {  // 遍历insertEle，根据i18n元素的 name 获取语言库对应的内容写入
 		            	   jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
 		                });
-		               // 第二类：layui的label
-		               var insertLabelEle = jQuery(".layui-form-label"); // 获得所有id为i18n的元素
-		               insertLabelEle.each(function() {  // 遍历，根据i18n元素的 name 获取语言库对应的内容写入
-		            	   jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
-		                });
 		               // 第三类：layui的button
 		               var insertBtnEle = jQuery(".layui-btn"); // 获得所有id为i18n的元素
 		               insertBtnEle.each(function() {  // 遍历，根据i18n元素的 name 获取语言库对应的内容写入
 		            	   jQuery(this).html(jQuery.i18n.prop(jQuery(this).attr('name')));
 		                });
-		               // 第四类：layui的input
-		               var insertInputEle = jQuery(".layui-input");
-		               insertInputEle.each(function() {
+		               // 第四类：layui的密码input
+		               var passwordEle = jQuery(".passwordInput");
+		               passwordEle.each(function() {
 		                    var selectAttr = jQuery(this).attr('selectattr');
 		                    if (!selectAttr) {
 		                        selectAttr = "value";
 		                    };
 		                    jQuery(this).attr(selectAttr, jQuery.i18n.prop(jQuery(this).attr('selectname')));
 		                });
+		               
+		            // 第四类：layui的用户名input
+		               var usernameEle = jQuery(".usernameInput");
+		               usernameEle.each(function() {
+		                    var selectAttr = jQuery(this).attr('selectattr');
+		                    if (!selectAttr) {
+		                        selectAttr = "value";
+		                    };
+		                    jQuery(this).attr(selectAttr, jQuery.i18n.prop(jQuery(this).attr('selectname')));
+		                });
+		               
 		               // 给隐藏的input赋值，值为语言类型：en/zh—CN
 		               jQuery('#hiddenLan').val(i18nLanguage);
 	           }  

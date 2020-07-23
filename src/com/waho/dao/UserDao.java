@@ -1,8 +1,11 @@
 package com.waho.dao;
 
+import java.util.List;
+
 import com.waho.domain.User;
 
 public interface UserDao {
+
 	/**
 	 * 根据用户名和密码查询用户信息
 	 * @param username
@@ -37,4 +40,37 @@ public interface UserDao {
      * @return
      */
 	public int updateUserPasswordByPassword(User user)throws Exception;
+	/**
+	 * 根据邮箱查找用户
+	 * @param email
+	 * @return
+	 * @throws Exception
+	 */
+	public User selectByEmail(String email)throws Exception;
+	/**
+	 * 更新用户获取验证码操作次数和验证码
+	 * @param admin
+	 * @throws Exception
+	 */
+	public void updateVerCodeAndOperateNumByPrimaryKey(User admin)throws Exception;
+	/**
+	 * 设置用户密码
+	 * @param id
+	 * @param password
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean updateUserPasswordById(int id, String password)throws Exception;
+	/**
+	 * 清除用户操作次数和验证码
+	 * @param verCode
+	 * @param operateNum
+	 * @throws Exception
+	 */
+	public void clearVercodeAndOpreateNum(String verCode, int operateNum)throws Exception;
+	/**
+	 * 获取系统内所有用户，得到用户集合
+	 * @return
+	 */
+	public List<User> getAllUsers()throws Exception;
 }

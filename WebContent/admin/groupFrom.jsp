@@ -15,7 +15,14 @@
 	/* 	border:3px solid #00695F;     */
 	height: 40px;
 }
-
+.functionDiv2 {
+	/* 	border:3px solid #00695F;     */
+	height: 40px;
+}
+.functionDiv3 {
+	/* 	border:3px solid #00695F;     */
+	height: 40px;
+}
 .addGroupDiv1 {
 	float: left;
 }
@@ -350,7 +357,6 @@
 										<th class="i18n" name="NodeMacAddr"></th>
 										<th class="i18n" name="NodeName"></th>
 										<th class="i18n" name="NetworkState"></th>
-<!-- 										<th  class="i18n" name="SwitchLightStatus">开关状态</th> -->
 										<th class="i18n" name="DimPara"></th>
 										<th class="i18n" name="LightSensorPara"></th>
      									<th class="i18n" name="SingleLampControl"></th>
@@ -798,7 +804,7 @@
 		        		 		<td>" + node.nodeName + "</td>\
 								<td>";
 								if (node.online) {
-									inner = inner + "online";
+									inner = inner +  "<font color='#009688'>online</font>";
 									//inner = inner + "在线";
 								} else {
 									inner = inner + "offline";
@@ -840,7 +846,7 @@
 		        		 	 <td>" + node.nodeName + "</td>\
 						     <td>";
 						  	 if (node.online) {
-								inner = inner + "online";
+								inner = inner +  "<font color='#009688'>online</font>";
 								//inner = inner + "在线";
 				 			 } else {
 								inner = inner + "offline";
@@ -886,7 +892,7 @@
 		 }
 		 
 		//8.向单个led分组表格内插入led分组下的节点数据
-		 function IntoLedGroupNodeTable(groupId){
+		 function IntoLedGroupNodeTable(groupId){  
 			 jQuery.ajax({
 				  type:"post",
 		          url:"${pageContext.request.contextPath}/getGroupNodesServlet",
@@ -907,7 +913,7 @@
 		        		 		<td>" + node.nodeName + "</td>\
 								<td>";
 								if (node.online) {
-									inner = inner + "online";
+									inner = inner +  "<font color='#009688'>online</font>";
 									//inner = inner + "在线";
 								} else {
 									inner = inner + "offline";
@@ -959,7 +965,7 @@
 		        		 		<td>" + node.nodeName + "</td>\
 								<td>";
 								if (node.online) {
-									inner = inner + "online";
+									inner = inner +  "<font color='#009688'>online</font>";
 									//inner = inner + "在线";
 								} else {
 									inner = inner + "offline";
@@ -1036,7 +1042,7 @@
 			        		  <td>" + node.nodeName + "</td>\
 								<td>";
 								if (node.online) {
-									inner = inner + "online";
+									inner = inner +  "<font color='#009688'>online</font>";
 									//inner = inner + "在线";
 								} else {
 									inner = inner + "offline";
@@ -1056,7 +1062,7 @@
 			        		  <td>" + node.nodeName + "</td>\
 								<td>";
 								if (node.online) {
-									inner = inner + "online";
+									inner = inner +  "<font color='#009688'>online</font>";
 									//inner = inner + "在线";
 								} else {
 									inner = inner + "offline";

@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.waho.domain.Group;
+import com.waho.service.UserService;
+import com.waho.service.impl.UserServiceImpl;
+
 /**
  * Servlet implementation class GroupDimFromServlet
  */
@@ -32,9 +36,12 @@ public class GroupDimFromServlet extends HttpServlet {
 		String groupid = request.getParameter("groupid");
 		String userid = request.getParameter("userid");
 		String i18nLanguageStr = request.getParameter("i18nLanguageStr");
-		//2.分发转向
-		request.setAttribute("userid", userid);
-		request.setAttribute("groupid", groupid);
+		//2.业务处理
+		UserService us = new UserServiceImpl();
+		Group group = new Group();
+		group = us.getGroupObjByUseridAndGroupid(Integer.parseInt(userid),Integer.parseInt(groupid));
+		//3.分发转向
+		request.setAttribute("groupObj", group);
 		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/groupDimFrom.jsp").forward(request, response);
 	}

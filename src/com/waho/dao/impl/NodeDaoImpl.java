@@ -118,7 +118,7 @@ public class NodeDaoImpl implements NodeDao {
 	public void updateLuxAndPrecentageByMac(Node node) throws Exception {
 		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
 	    qr.update("UPDATE node SET lux=?,precentage=? WHERE mac=?",node.getLux(),node.getPrecentage(),node.getMac());
-//	    qr.update("UPDATE node SET userid=?,groupState=? WHERE id=?",userid, 0, id);
+
 	}
 
 	@Override

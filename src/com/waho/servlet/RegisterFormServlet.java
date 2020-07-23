@@ -37,17 +37,18 @@ public class RegisterFormServlet extends HttpServlet {
 		String password = request.getParameter("password");
 		String passwordrep = request.getParameter("passwordrep"); //验证密码
 		String email = request.getParameter("email");
+		String phone = request.getParameter("phone");
 		String i18nLanguage = request.getParameter("i18nLanguage");
 		// 调用业务逻辑
 		if(password.equals(passwordrep)) { //2次密码一致
 			UserService userService = new UserServiceImpl();
-			Boolean result = userService.userRegister(username, password, email);//执行注册
+			Boolean result = userService.userRegister(username, password, email, phone);//执行注册
 			// 分发转向
 			if (result == true) {
 				if(i18nLanguage.equals("zh-CN")) {
 					response.setHeader("refresh","3;/wifiProject");//客户端
 					//response.setHeader("refresh","3;/wifiProject1");//本地测试
-					response.getWriter().write("注册成功，3秒后跳转到登录页面！");
+					//response.getWriter().write("注册成功，3秒后跳转到登录页面！");
 				}else {
 					response.setHeader("refresh","3;/wifiProject");//客户端
 					//response.setHeader("refresh","3;/wifiProject1");//本地测试

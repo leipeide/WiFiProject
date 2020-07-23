@@ -32,11 +32,6 @@
 			<div class="layui-tab-item layui-show" id="zhenliuqi_table">
 				<!-- 为美观，表格风格设置为sm -->
 				<table class="layui-table" lay-size="sm">
-<%-- 					<colgroup>
-						<col width="150">
-						<col width="130">
-						<col>
-					</colgroup> --%>
 					<thead>
 						<tr>
 							<th class="i18n" name="NodeMacAddr"></th>
@@ -58,7 +53,7 @@
 									onclick="nodeRename('${pageContext.request.contextPath }/nodeRenameFromServlet', ${ballast.id})">
 										<font color="#009688">${ballast.nodeName }</font>
 								</a></td>
-								<td>${ballast.online == true ? "online" : "offline" }</td>
+								<td>${ballast.online == true ? "<font color='#009688'>online</font>" :  "offline" }</td>
 								<%-- <td>${ballast.switchState == 0 ? "关灯" : "开灯"}</td> --%>
 								<td>${ballast.switchState == 0 ? "<img style='width:25px;height:25px' src='admin/img/dengpaoOFF.png'>" : "<img style='width:25px;height:25px' src='admin/img/dengpaoON.png'>"}</td>
 								<td>${ballast.precentage }%</td>
@@ -120,15 +115,10 @@
 					</tbody>
 				</table>
 			</div>
-			<!-- 2.Tab驱动器区域 -->
+			<!-- 2.led驱动器区域 -->
 			<div class="layui-tab-item" id="ledDriver_table">
 				<!-- 为美观，表格风格设置为sm -->
 				<table class="layui-table" lay-size="sm">
-<%-- 					<colgroup> 
-						<col width="150">
-						<col width="110">
-						<col>
-					</colgroup>--%>
 					<thead>
 						<tr>
 							<th class="i18n" name="NodeMacAddr"></th>
@@ -151,7 +141,7 @@
 									onclick="nodeRename('${pageContext.request.contextPath }/nodeRenameFromServlet', ${led.id})">
 										<font color="#009688">${led.nodeName }</font>
 								</a></td>
-								<td>${led.online == true ? "online" : "offline" }</td>
+								<td>${led.online == true ? "<font color='#009688'>online</font>" : "offline" }</td>
 								<%-- <td>${led.switchState == 0 ? "关灯" : "开灯"}</td> --%>
 								<td>${led.switchState == 0 ? "<img style='width:25px;height:25px' src='admin/img/dengpaoOFF.png'>" : "<img style='width:25px;height:25px' src='admin/img/dengpaoON.png'"}</td>
 								<td>${led.precentage }%</td>
@@ -233,11 +223,6 @@
 			<div class="layui-tab-item">
 				<!-- 为美观，表格风格设置为sm -->
 				<table class="layui-table" lay-size="sm">
-<%-- 					<colgroup> 
-						<col width="170">
-						<col width="150">
-						<col>
-					</colgroup> --%>
 					<thead>
 						<tr>
 							<th class="i18n" name="NodeMacAddr"></th>
@@ -260,7 +245,7 @@
 									onclick="nodeRename('${pageContext.request.contextPath }/nodeRenameFromServlet', ${wifi.id})">
 										<font color="#009688">${wifi.nodeName }</font>
 								</a></td>
-								<td>${wifi.online == true ? "online" : "offline" }</td>
+								<td>${wifi.online == true ?  "<font color='#009688'>online</font>" : "offline" }</td>
 								<td>${wifi.precentage }%</td>
 								<td>${wifi.lux } lux</td>
 								<td><div class="layui-btn-group">

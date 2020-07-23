@@ -11,6 +11,14 @@
 	src="${pageContext.request.contextPath }/layui/layui.js"></script>
 <title></title>
 <style>
+/* 
+ *重要： layui-layout-body的overflow属性layui框架自带的是hidden; 
+ *当页面内容超出页面时，内容被修剪，故自己设置overflow属性为auto  
+ */
+ .layui-layout-body{ 
+	 	overflow:auto; 
+  }
+  
 .inputDiv {
 	margin-top: 15px;
 	padding-top: 10px;

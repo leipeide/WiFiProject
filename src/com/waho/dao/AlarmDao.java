@@ -43,6 +43,24 @@ public interface AlarmDao {
 	 * @throws Exception
 	 */
 	void updateAlarmDateById(int id, Date date)throws Exception;
+	/**
+	 * 插入报警记录
+	 * @param alarm
+	 */
+    void insert(Alarm alarm)throws Exception;
+    /**
+     * 根据节点mac和节点报警类型查找该节点的某一报警类型记录集合
+     * @param alarmDisconnect
+     * @param mac
+     * @return
+     */
+	List<Alarm> selectAlarmByMacAndAlarmType(int alarmType, String mac)throws Exception;
+	/**
+	 * 根据报警记录id更新报警记录
+	 * @param id
+	 * @param alarm
+	 */
+	void updataAlarmRecordById(int id, Alarm alarm)throws Exception;
 	
 
 }

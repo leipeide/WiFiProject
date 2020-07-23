@@ -190,13 +190,8 @@
 		  slider.render({
 		    elem: '#colorControlSlide'
 		    ,setTips: function(value){ //自定义提示文本
-		    	return jQuery.i18n.prop('color-red')+value+"%";
-		    	/*
-		    	if(value >=0 && value <=50){
-		    		return value+"(红色)";
-		    	}else if(value > 50 && value <= 100){
-		    		return value+"(蓝色)";
-		    	}	*/
+		    	return jQuery.i18n.prop('colorRed')+value+"%";
+		  
 		     }
 		    ,change: function(value){
 		    	//监听滑块改变的数值，并存入全局变量toningValue中，为调色函数提供调色参数
@@ -237,13 +232,14 @@
 		if(!reg.test(val)){
 			layui.use(['layer'], function(){
 				  var layer = layui.layer;
+				  if(val<0){
+						obj.value = 0;
+				  }else if(val>100){
+						obj.value = 100;
+				  }
 				  layer.msg(jQuery.i18n.prop('100Int'));
 				//  layer.msg("请输入0-100以内的整数");
 			});
-		}else if(val<0){
-			obj.value = 0;
-		}else if(val>100){
-			obj.value = 100;
 		}
 	}
 	

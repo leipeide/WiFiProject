@@ -2,8 +2,8 @@
 <c3p0-config>
   <default-config>
 	<property name="driverClass">com.mysql.jdbc.Driver</property>
-     <property name="jdbcUrl">jdbc:mysql://localhost:3306/wifi_project</property>
-<!-- 	 <property name="jdbcUrl">jdbc:mysql://localhost:3306/wifitest</property> -->
+    <property name="jdbcUrl">jdbc:mysql://localhost:3306/wifi_project?characterEncoding=utf-8</property> 
+<!--   	<property name="jdbcUrl">jdbc:mysql://localhost:3306/wifi_project1?characterEncoding=utf-8</property> -->
 	<property name="user">root</property>
 	<property name="password">password</property>
     <property name="initialPoolSize">10</property>

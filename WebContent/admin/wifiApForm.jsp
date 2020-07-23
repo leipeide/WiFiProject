@@ -10,8 +10,14 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath }/layui/layui.js"></script>
 <title></title>
+<style>
+/* scroll内容会被修剪，但是浏览器会显示滚动条以便查看其余的内容。 */
+.layui-layout-body{ 
+ 	 overflow:scroll;  
+  }
+</style>
 </head>
-<body>
+<body class="layui-layout-body">
 	<input type="hidden" id="userid" value=${userid }>
 	<!-- 作为隐藏标签,用于储存语言类型,在项目中传递 -->
 	<input type="hidden" id="hiddenLan" name="i18nLanguage" value=${i18nLanguage }>

@@ -55,6 +55,13 @@ public class PloyOperateDaoImpl implements PloyOperateDao {
 		return qr.update("delete from ploy_operate where id=?",operateId);
 	}
 
+	@Override
+	public void clearPloyOperateState(int state) throws Exception {
+		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
+		qr.update("UPDATE ploy_operate SET state=?", state);
+		
+	}
+
 	
 
 }

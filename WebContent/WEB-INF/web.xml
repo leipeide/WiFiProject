@@ -22,4 +22,7 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
+  <listener>  
+       <listener-class>com.waho.websocket.ContextListener</listener-class>  
+  </listener> 
 </web-app>

@@ -18,13 +18,22 @@
 		<div class="layui-form-item" style="margin-top:10px;">
 			<label class="i18n" style="width:130px;margin-left:25px;" name="DimPara"></label>
 			<div class="layui-input-block" style="width:130px;margin-left:60px;margin-top:10px;">
-				<input class="layui-input" id="text1" type="text" name="percentage" placeholder="0-100"  
-					required lay-verify="required" autocomplete="off" onchange="percentCheck(this)">
+				<!-- 两种类型的节点调光范围不一样，用户if进行判断，进入不同调光范围的input -->
+				<c:set var="groupType" value="${groupObj.type}"/>
+					<!-- 镇流器类型节点调光范围是50-100 -->
+  					<c:if test="${groupType == 1}"> 
+  						<input class="layui-input" id="text1" type="text" placeholder="50-100"  
+						required lay-verify="required" autocomplete="off" onchange="halfpercentCheck(this)">
+					</c:if>
+					<c:if test="${groupType == 2}"> 
+						<input class="layui-input" id="text2" type="text"  placeholder="0-100"  
+						required lay-verify="required" autocomplete="off" onchange="percentCheck(this)">
+					</c:if>
 			</div>
 		</div>
 		<div class="layui-form-item" style="margin-left:60px;">
 			<a class="layui-btn layui-btn-sm" 
-				onclick="submitBtn('${pageContext.request.contextPath }/groupDimServlet',${userid },${groupid })">
+				onclick="submitBtn('${pageContext.request.contextPath }/groupDimServlet',${groupObj.userid},${groupObj.groupid})">
 				<font class="i18n" name="Lsubmit"></font>
 			</a>
 		</div>
@@ -42,6 +51,7 @@
 
 		//2.i18nLanguage为全局变量，是当前系统的语言环境，获取id为hiddenLan的value值，
 		var i18nLanguage = jQuery("#hiddenLan").val(); 
+		var DimPercentage = ""; //全局变量，调光百分比
 		
 		//3.重要：这里需要进行i18n的翻译；进入相应语言环境的语言库，翻译页面
 		window.onload = function() {
@@ -65,27 +75,39 @@
 			  });
 		}
 		
-		//4.检查调光范围
+		//4.检查调光范围PWM0-100
 		function percentCheck(obj){
-			var val = document.getElementById("text1").value;
+			var val = document.getElementById("text2").value;
 			if(val<0){
 				obj.value = 0;
 			}if(val>100){
 				obj.value = 100;
 			}
+			DimPercentage = jQuery("#text2").val(); //调光百分比
 		}
 		
-		//5.按钮提交函数
+		//5.控制设置调光范围PWM 50-100
+		function halfpercentCheck(obj){
+			var val = document.getElementById("text1").value;
+			if(val<50){
+				obj.value = 50;
+			}if(val>100){
+				obj.value = 100;
+			}
+			DimPercentage = jQuery("#text1").val(); //调光百分比
+		}
+		
+		//6.按钮提交函数
 		function submitBtn(url,userid,groupid){
-			var text1 = jQuery("#text1").val(); //调光百分比
-			if(text1 != ""){
+			//var text1 = jQuery("#text1").val(); //调光百分比
+			if(DimPercentage != ""){
 				jQuery.ajax({
 					  type:"post",
 			          url:url,
 			          data:{
 			        	userid: userid,
 			            groupid:groupid,
-			            percentage:text1,
+			            percentage:DimPercentage,
 			          },
 			          async : true,
 			          datatype: "String",

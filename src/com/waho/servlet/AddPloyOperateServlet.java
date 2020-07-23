@@ -37,8 +37,8 @@ public class AddPloyOperateServlet extends HttpServlet {
 		response.setContentType("text/html; charset=utf-8");
 		
 		//1.获取功能类型字符串；
-		String functionStr = request.getParameter("functionStr"); //功能类型字符串;根据他选择功能函数；功能种类字符串类型：switch 、 dim、 toning;
-		String functionParamStr = request.getParameter("paramValue"); //switch功能对应boolean类型；dim、 toning对应整数类型
+		String functionStr = request.getParameter("functionStr"); //功能类型字符串;根据他选择功能函数；功能种类字符串类型：switch 、autoDiming、 dim、 toning;
+		String functionParamStr = request.getParameter("paramValue"); //switch功能对应boolean类型；autoDiming、dim、 toning对应整数类型
 		String useridStr = request.getParameter("userid"); //用户id
 		String ployidStr = request.getParameter("ployid"); //策略id
 		String hoursStr = request.getParameter("hours");  //策略操作执行的时间：小时
@@ -85,7 +85,7 @@ public class AddPloyOperateServlet extends HttpServlet {
 							response.getWriter().write(res);
 						}
 						
-					}else if(functionStr.equals("dim")) { // 添加调光策略操作
+					}else if(functionStr.equals("dim")) { // 添加PWM调光策略操作(镇流器，led)
 						boolean result = us.addPloyOperateOfDim(userid,ployid,hours,minutes,startDate,endDate,value);
 						if(result) {
 							String res = "操作成功";
@@ -95,6 +95,25 @@ public class AddPloyOperateServlet extends HttpServlet {
 							response.getWriter().write(res);
 						}
 						
+					}else if(functionStr.equals("autoDiming")) {	//wifi无线调光器
+						boolean result = us.addPloyOperateOfAutoDim(userid,ployid,hours,minutes,startDate,endDate,value);
+						if(result) {
+							String res = "操作成功";
+							response.getWriter().write(res);
+						}else {
+							String res = "操作失败";
+							response.getWriter().write(res);
+						} 
+						
+					}else if(functionStr.equals("wifidim")) {
+						boolean result = us.addPloyOperateOfWifiPwmDim(userid,ployid,hours,minutes,startDate,endDate,value);
+						if(result) {
+							String res = "操作成功";
+							response.getWriter().write(res);
+						}else {
+							String res = "操作失败";
+							response.getWriter().write(res);
+						} //
 						
 					}else {// 添加调色策略操作
 						boolean result = us.addPloyOperateOfToning(userid,ployid,hours,minutes,startDate,endDate,value);

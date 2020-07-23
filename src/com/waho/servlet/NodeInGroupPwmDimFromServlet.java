@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.waho.domain.Node;
+import com.waho.service.UserService;
+import com.waho.service.impl.UserServiceImpl;
+
 /**
  * Servlet implementation class NodeInGroupPwmDimFromServlet
  */
@@ -31,9 +35,12 @@ public class NodeInGroupPwmDimFromServlet extends HttpServlet {
 		// 1.获取表单数据
 		String nodeid = request.getParameter("nodeid");
 		String i18nLanguageStr = request.getParameter("i18nLanguage");
-		//System.out.println("i18nLanguageSt:"+i18nLanguageStr);
-		// 2.分发转向
-		request.setAttribute("nodeid", nodeid);
+		// 2.业务处理
+		UserService us = new UserServiceImpl();
+		Node node = new Node();
+	    node = us.getNodeByIdString(nodeid);
+		// 3.分发转向
+	    request.setAttribute("nodeObj", node);
 		request.setAttribute("i18nLanguage", i18nLanguageStr);
 		request.getRequestDispatcher("/admin/NodeInGroupDimForm.jsp").forward(request, response);
 		}

@@ -56,7 +56,7 @@ public class Alarm {
 		super();
 	}
 	
-	public Alarm(Date date, String mac,int type,int userid,int power,int temperature) {
+	public Alarm(Date date, String mac,int type,int userid,int power,float temperature) {
 		super();
 		this.setDate(date);
 		this.setMac(mac);

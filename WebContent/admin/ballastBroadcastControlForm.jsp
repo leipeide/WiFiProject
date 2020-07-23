@@ -67,7 +67,7 @@
 				<div class="dimValue" id="dimDiv" style="display: none;">
 					<label class="i18n" name="EnterDimPara" style="width:200px;"></label>
 					<div style="margin-top: 10px; margin-left: 40px; width: 100px;">
-						<input type="text" id="dimInput" placeholder="0-100" required lay-verify="required"
+						<input type="text" id="dimInput" placeholder="50-100" required lay-verify="required"
 							autocomplete="off" class="layui-input" onchange="checkDim(this)">
 					</div>
 				</div>
@@ -132,8 +132,8 @@
 		//4.控制调光范围
 		function checkDim(obj){
 			var val = document.getElementById("dimInput").value;
-			if(val<0){
-				obj.value = 0;
+			if(val<50){
+				obj.value = 50;
 			}else if(val>100){
 				obj.value = 100;
 			}

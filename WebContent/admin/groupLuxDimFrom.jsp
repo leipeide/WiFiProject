@@ -169,16 +169,6 @@
 			}
 					
 		}
-	    
-		//4.核对调光参数范围
-		function percentCheck(obj){
-			var val = document.getElementById("text1").value;
-			if(val<1){
-				obj.value = 1;
-			}if(val>60000){
-				obj.value = 60000;
-			}
-		}
 	</script>
 </body>
 </html>
