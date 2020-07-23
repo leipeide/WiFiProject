@@ -1,7 +1,10 @@
 package com.waho.dao.impl;
 
+import java.util.List;
+
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 import com.waho.dao.UserDao;
 import com.waho.domain.User;
@@ -76,6 +79,12 @@ public class UserDaoImpl implements UserDao {
 		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
 		qr.update("update user set vercode=?, operatenum=?", verCode, operateNum);
 		
+	}
+
+	@Override
+	public List<User> getAllUsers() throws Exception{
+		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
+		return qr.query("select *from user", new BeanListHandler<User>(User.class));
 	}
 	
 	

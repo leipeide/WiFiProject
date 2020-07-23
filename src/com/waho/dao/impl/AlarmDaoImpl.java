@@ -48,6 +48,33 @@ public class AlarmDaoImpl implements AlarmDao{
 		
 	}
 
+	@Override
+	public void insert(Alarm alarm) throws Exception {
+		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
+		qr.update(
+				"INSERT INTO alarm (`userid`, `mac`, `type`, `power`, `temperature`, `date`) VALUES (?, ?, ?, ?, ?, ?)",
+				alarm.getUserid(), alarm.getMac(), alarm.getType(), alarm.getPower(), alarm.getTemperature(), alarm.getDate());
+		
+	}
+
+	@Override
+	public List<Alarm> selectAlarmByMacAndAlarmType(int alarmType, String mac) throws Exception {
+		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
+		return qr.query("select *from alarm where mac=? and type=?",
+				new BeanListHandler<Alarm>(Alarm.class), mac, alarmType);
+	}
+
+	@Override
+	public void updataAlarmRecordById(int id, Alarm alarm) throws Exception {
+		QueryRunner qr = new QueryRunner(C3P0Utils.getDataSource());
+		qr.update("update alarm set mac=?, type=?, power=?, temperature=?, date=? where id=?",
+				alarm.getMac(), alarm.getType(), alarm.getPower(), 
+				alarm.getTemperature(), alarm.getDate(), id);
+		
+	}
+
+	
+
 	
 	
 }

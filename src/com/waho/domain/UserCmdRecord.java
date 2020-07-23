@@ -47,6 +47,10 @@ public class UserCmdRecord {
 	 * 定时调色指令
 	 */
 	public static int CMD_TIMING_TONING = 10; 	
+	/**
+	 * 读灯状态指令
+	 */
+	public static int CMD_READ = 11;
 	/*
 	 * 主键：id
 	 */

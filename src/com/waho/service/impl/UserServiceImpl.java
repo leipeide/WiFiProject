@@ -43,6 +43,7 @@ import com.waho.domain.UserCmdRecord;
 import com.waho.service.NodeService;
 import com.waho.service.UserService;
 import com.waho.util.MD5Utils;
+import com.waho.util.ToolUtils;
 import com.waho.websocket.WebSocketServlet;
 
 public class UserServiceImpl implements UserService {
@@ -382,10 +383,11 @@ public class UserServiceImpl implements UserService {
 			nodeList1 = nodeDao.selectBallastNodeByUseridAndType(userid);
 			nodeList2 = nodeDao.selectLedNodeByUseridAndType(userid);
 			nodeList3 = nodeDao.selectWifiNodeByUseridAndType(userid);
+		    //将节点集合通过在线状态进行有序化，有序化完成后加入Map中
 			resultMap = new HashMap<String, Object>();
-			resultMap.put("ballast", nodeList1);
-			resultMap.put("led", nodeList2);
-			resultMap.put("wifi", nodeList3);
+			resultMap.put("ballast", ToolUtils.NodeNetStateSort(nodeList1));
+			resultMap.put("led", ToolUtils.NodeNetStateSort(nodeList2));
+			resultMap.put("wifi", ToolUtils.NodeNetStateSort(nodeList3));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1275,20 +1277,23 @@ public class UserServiceImpl implements UserService {
 	public List<Node> getGroupNode(int groupid) {
 		List<Node> nodeList = null;
 		List<GroupNode> gnList = null;
+		List<Node> SortList = new ArrayList<>();
 		NodeDao nodeDao = new NodeDaoImpl();
 		NodeService ns = new NodeServiceImpl();
 		GroupNodeDao gnDao = new GroupNodeDaoImpl();
 		try {
-			
+			//1.根据分组id得到分组内的节点 集合
 			gnList = gnDao.selectNodeByGroupid(groupid);
 			nodeList = ns.currencyGetNodeListInGroup(gnList);
+			//2.将分组内的节点根据节点在线的网络状态进行排序，以至于前端显示时先显示在线节点
+		    SortList = ToolUtils.NodeNetStateSort(nodeList);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return nodeList;
+		return SortList;
 	}
 
 	@Override
@@ -1543,7 +1548,6 @@ public class UserServiceImpl implements UserService {
 					// 调用websocket发送指令接口,一个节点一个websocket
 					for (WebSocketServlet socket : WebSocketServlet.webSocketSet){
 						if (socket.getId() == node.getId()) {
-							System.out.println("if");
 							Message cmd = new Message();{//恢复节点ap模式指令
 							cmd.setMsg("request");
 							cmd.setCmd("wifiApModel");

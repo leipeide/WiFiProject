@@ -1,8 +1,11 @@
 package com.waho.dao;
 
+import java.util.List;
+
 import com.waho.domain.User;
 
 public interface UserDao {
+
 	/**
 	 * 根据用户名和密码查询用户信息
 	 * @param username
@@ -58,6 +61,16 @@ public interface UserDao {
 	 * @throws Exception
 	 */
 	public boolean updateUserPasswordById(int id, String password)throws Exception;
-
+	/**
+	 * 清除用户操作次数和验证码
+	 * @param verCode
+	 * @param operateNum
+	 * @throws Exception
+	 */
 	public void clearVercodeAndOpreateNum(String verCode, int operateNum)throws Exception;
+	/**
+	 * 获取系统内所有用户，得到用户集合
+	 * @return
+	 */
+	public List<User> getAllUsers()throws Exception;
 }

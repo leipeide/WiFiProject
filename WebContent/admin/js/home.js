@@ -88,9 +88,10 @@ function wifiReset(url, userid) {
 	layui.use('layer', function() {
 		var layer = layui.layer;
 		layer.open({
-			area : [ '350px','400px'],
+			area : [ '600px','400px'],
+			//area : [ 'auto','400px'],
 			btnAlign : 'c',
-			resize : false,
+			resize : true, //窗口内信息众多，允许拉伸
 			content : url + "?userid=" + userid + "&i18nLanguage="+i18nLanguage,
 			closeBtn : 1,
 			type : 2,
@@ -100,7 +101,8 @@ function wifiReset(url, userid) {
 				// 右上角关闭回调
 				location.reload();
 				// return false 开启该代码可禁止点击该按钮关闭
-			}
+			},
+			
 		});
 	});
 }
@@ -114,19 +116,22 @@ function wifiApModel(url,userid){
 	layui.use('layer', function() {
 		var layer = layui.layer;
 		layer.open({
-			area: ['400px', '300px'],
+			area: ['600px', '400px'],
+			//area : [ 'auto','300px'],
 			btnAlign : 'c',
-			resize : false,
+			resize : true,
 			content : url + "?userid=" + userid + "&i18nLanguage="+i18nLanguage,
 			closeBtn : 1,
 			type : 2,
+			maxHeight: '800px',
 			//title:"清除节点网络信息",
 			title:jQuery.i18n.prop("LclearInternet"),
 			cancel : function() {
 				// 右上角关闭回调
 				location.reload();
 				// return false 开启该代码可禁止点击该按钮关闭
-			}
+			},
+			
 		});
 	});
 }

@@ -329,8 +329,8 @@ public class Node {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
+	//	if (this == obj)
+		//	return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
@@ -359,11 +359,12 @@ public class Node {
 			return false;
 		if (online != other.online)
 			return false;
-		if (lastOperateType == null) {
+/*		if (lastOperateType == null) {
 			if (other.lastOperateType != null)
 				return false;
 		} else if (!lastOperateType.equals(other.lastOperateType))
 			return false;
+			*/
 		if (param2 == null) {
 			if (other.param2 != null)
 				return false;

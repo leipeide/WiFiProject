@@ -74,7 +74,7 @@ public class WebSocketServlet {
 						if (servlet.timeCount > TIMEOUT) {
 							//1.3节点断开连接报警
 							try {
-								if(servlet.getId() != 0) {
+								/*if(servlet.getId() != 0) {
 									NodeDao nodeDao = new NodeDaoImpl();
 									AlarmDao alarmDao = new AlarmDaoImpl();
 									Node node = nodeDao.selectNodeById(servlet.getId());
@@ -95,8 +95,11 @@ public class WebSocketServlet {
 									}
 									
 								}
+								*/
 								//1.4 30秒内未收到客户端的心跳包，websocket主动断开与客户端的连接
 								servlet.session.close(); //session 关闭以后直接调用onClose方法，webScoket失去连接
+								logger.info("超过30s没收到节点的心跳包，服务器主动与节点断开连接");
+								
 								
 								
 							} catch (Exception e) {
@@ -186,7 +189,7 @@ public class WebSocketServlet {
 	 */
 	public void sendMessage(String message) throws IOException {
 		this.session.getBasicRemote().sendText(message);
-		System.out.println("发送给客户端的消息:" + message);
+		//System.out.println("发送给客户端的消息:" + message);
 	}
 	
 	
